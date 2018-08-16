@@ -32,4 +32,12 @@
 
     <!-- 第二种数据源配置方式:统一封装dao(只写个sql的mapper映射文件就行) by yangkang -->
     <beans:import resource="classpath:spring/ds/ds-packageofdao.xml"/>
+
+    <!-- 第三种数据源配置:上面两种都是c3p0连接池,这里是dbcp连接池,同上封装dao by yangkang -->
+    <beans:import resource="classpath:spring/ds/ds-dbcpversion.xml"/>
+
+    <!-- 第四种数据源配置:JNDI方式 待完成 -->
+
+    <!-- 第五种数据源配置:druid连接池,同上封装dao by yangkang -->
+    <beans:import resource="classpath:spring/ds/ds-druidversion.xml"/>
 </beans>

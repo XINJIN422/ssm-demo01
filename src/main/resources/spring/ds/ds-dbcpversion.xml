@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 数据库连接池 -->
+    <bean id="dataSource3" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="${dbcp.initialSize}"></property>
+        <property name="maxActive" value="${dbcp.maxActive}"/>
+        <property name="maxIdle" value="${dbcp.maxIdle}"></property>
+        <property name="minIdle" value="${dbcp.minIdle}"/>
+        <property name="maxWait" value="${dbcp.maxWait}"></property>
+        <!-- 心跳检查 -->
+        <!-- 注：testOnBorrow只会发现当前连接失效，再创建一个连接供当前查询使用，
+        而testWhileIdle会定时校验numTestsPerEvictionRun个连接，只要发现连接失效，
+        就将其移除再重新创建。-->
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="validationQuery" value="select 1 "/>
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <property name="numTestsPerEvictionRun" value="${dbcp.maxActive}"/>
+    </bean>
+
+    <!-- 配置SqlSessionFactory对象 -->
+    <bean id="sqlSessionFactory3" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource3"/>
+        <!-- sql文件扫描路径 -->
+        <property name="mapperLocations" value="classpath:sql/mysql/*SQL.xml"/>
+        <!-- 扫描entity包 使用别名 -->
+        <property name="typeAliasesPackage" value="com.yangkang.ssmdemo01.mvc.entity"/>
+    </bean>
+
+    <!-- 配置sqlSession -->
+    <bean id="sqlSessionTemplate3" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory3"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource3"/>
+    </bean>
+
+    <!-- 配置基于注解的声明式事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager3"/>
+
+</beans>

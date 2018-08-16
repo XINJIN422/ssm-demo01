@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 数据库连接池 -->
+    <bean id="dataSource5" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <!--<property name="password" value="${jdbc.password}"/>-->
+        <!-- druid密码加密解密,先命令行加密java -cp druid-1.1.10.jar com.alibaba.druid.filter.config.ConfigTools 123456
+            ,再配置解密-->
+        <property name="password" value="${druid.encrypt.password}"/>
+        <!-- 和下面的状态监控合并 -->
+        <!--<property name="filters" value="config"/>-->
+        <!-- 配置密码需要解密及publickey的值,这边官方文档有个坑,按照一行写property解析出来只有一个,所以改成如下形式 -->
+        <!--<property name="connectProperties" value="config.decrypt=true;config.decrypt.key=${druid.encrypt.publickey}"/>-->
+        <property name="connectProperties">
+            <value>config.decrypt=true
+                   config.decrypt.key=${druid.encrypt.publickey}
+            </value>
+        </property>
+        <!-- 上面注入属性初始值,或者也可以新建bean,赋初始值后,在proxyFilters中引用它,像下面的druid日志配置一样 -->
+        <!--<bean id="conig_Filter" class="com.alibaba.druid.filter.config.ConfigFilter">-->
+            <!--<property name="decrypt" value="true"/>-->
+            <!--<property name="key" value="${druid.encrypt.publickey}"/>-->
+        <!--</bean>-->
+
+        <property name="initialSize" value="${druid.initialSize}" />
+        <property name="minIdle" value="${druid.minIdle}" />
+        <property name="maxActive" value="${druid.maxActive}" />
+        <property name="maxWait" value="${druid.maxWait}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" />
+        <property name="testWhileIdle" value="false" /><!--yk-->
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 (mysql5.5版本以下没有该功能,建议关闭)-->
+        <!--<property name="poolPreparedStatements" value="true" />-->
+        <!--<property name="maxOpenPreparedStatements"  value="100" />-->
+
+        <!-- 这里配置提交方式，默认就是TRUE，可以不用配置 -->
+        <property name="defaultAutoCommit" value="true" />
+
+        <!-- 验证连接有效与否的SQL，不同的数据配置不同 -->
+        <property name="validationQuery" value="select 1 " />
+        <!-- druid内置的用于统计监控信息(StatFilter的别名是stat，这个别名映射配置信息保存在druid-xxx.jar!/META-INF/druid-filter.properties) -->
+        <!-- 此处的config是上面密码解密的配置 -->
+        <property name="filters" value="stat,config" />
+        <property name="proxyFilters">
+            <list>
+                <ref bean="logFilter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="logFilter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+        <!-- 开发环境打开,生产上可以关闭这些日志 -->
+        <property name="resultSetLogEnabled" value="false"/>
+        <property name="statementExecutableSqlLogEnable" value="false" />
+    </bean>
+
+    <!-- 配置SqlSessionFactory对象 -->
+    <bean id="sqlSessionFactory5" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource5"/>
+        <!-- sql文件扫描路径 -->
+        <property name="mapperLocations" value="classpath:sql/mysql/*SQL.xml"/>
+        <!-- 扫描entity包 使用别名 -->
+        <property name="typeAliasesPackage" value="com.yangkang.ssmdemo01.mvc.entity"/>
+    </bean>
+
+    <!-- 配置sqlSession -->
+    <bean id="sqlSessionTemplate5" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory5"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager5" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource5"/>
+    </bean>
+
+    <!-- 配置基于注解的声明式事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager5"/>
+
+</beans>
