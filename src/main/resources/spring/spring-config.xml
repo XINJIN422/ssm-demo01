@@ -36,8 +36,12 @@
     <!-- 第三种数据源配置:上面两种都是c3p0连接池,这里是dbcp连接池,同上封装dao by yangkang -->
     <beans:import resource="classpath:spring/ds/ds-dbcpversion.xml"/>
 
-    <!-- 第四种数据源配置:JNDI方式 待完成 -->
+    <!-- 第四种数据源配置:JNDI+tomcat dbcp方式,同上封装dao by yangkang  -->
+    <!--<beans:import resource="classpath:spring/ds/ds-jndiversion.xml"/>-->
 
     <!-- 第五种数据源配置:druid连接池,同上封装dao by yangkang -->
     <beans:import resource="classpath:spring/ds/ds-druidversion.xml"/>
+
+    <!-- 第六种数据源配置:hikariCP连接池,同上封装dao by yangkang -->
+    <beans:import resource="classpath:spring/ds/ds-hikariCPversion.xml"/>
 </beans>

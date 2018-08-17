@@ -80,6 +80,12 @@
       <artifactId>druid</artifactId>
       <version>1.1.10</version>
     </dependency>
+    <!-- hikariCP数据源连接池 -->
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+      <version>3.1.0</version>
+    </dependency>
     <!-- MyBatis -->
     <dependency>
       <groupId>org.mybatis</groupId>

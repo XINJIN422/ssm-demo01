@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class DaoSupport implements Dao {
 
-    @Resource(name = "sqlSessionTemplate5")
+    @Resource(name = "sqlSessionTemplate6")
     private SqlSessionTemplate sqlSessionTemplate;
 
     /**

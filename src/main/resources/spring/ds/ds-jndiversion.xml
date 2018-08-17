@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--JNDI方式获取数据源-->
+    <bean id="dataSource4" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="ds_4"/>
+        <!--下面的配置主要针对tomcat服务器,否则需要在jndiName前加上java:comp/env/,weblogic服务器则不用-->
+        <property name="resourceRef" value="true"/>
+    </bean>
+
+    <!-- 配置SqlSessionFactory对象 -->
+    <bean id="sqlSessionFactory4" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource4"/>
+        <!-- sql文件扫描路径 -->
+        <property name="mapperLocations" value="classpath:sql/mysql/*SQL.xml"/>
+        <!-- 扫描entity包 使用别名 -->
+        <property name="typeAliasesPackage" value="com.yangkang.ssmdemo01.mvc.entity"/>
+    </bean>
+
+    <!-- 配置sqlSession -->
+    <bean id="sqlSessionTemplate4" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory4"/>
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager4" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource4"/>
+    </bean>
+
+    <!-- 配置基于注解的声明式事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager4"/>
+
+</beans>
+
+<!-- 生产上tomcat的server.xml可以这样配置(放在host标签的子标签位置),connector标签添加URIEncoding="UTF-8"属性 -->
+<!--<Context path="/guidemanm" reloadable="false" docBase="E:\workfiles\code_GZ\DD3\branchs\GZCU\gz-unp-guidemanm\web" sessionCookieName="UNP_GUIDEMANM_JSESSIONID"/>-->
+<!--<Context path="/cas-server" reloadable="false" docBase="E:\workfiles\code_GZ\DD3\cas-server\src\main\webapp" sessionCookieName="CAS_JSESSIONID"/>-->
+<!--<Context path="/ordercenter" reloadable="false" docBase="E:\workfiles\code_GZ\DD3\unp-ordercenter\src\main\webapp" sessionCookieName="UNP_ORDERCENTER_JSESSIONID"/>-->
+<!--<Context path="/unpintf" reloadable="false" docBase="E:\workfiles\code_GZ\DD3\unp-unpintf\src\main\webapp" sessionCookieName="UNP_UNPINTF_JSESSIONID"/>-->
+<!--<Context path="/unpframe" reloadable="false" docBase="E:\workfiles\code_GZ\DD3\unp-unpframe\web" sessionCookieName="UNP_UNPFRAME_JSESSIONID"/>-->
+
+<!-- jndi:tomcat的context.xml配置(放在context标签的子标签位置) -->
+<!-- oracle连接 -->
+<!--<Resource name="ds_4" auth="Container" type="javax.sql.DataSource"-->
+      <!--driverClassName="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@IP:PORT:DATABASENAME"-->
+      <!--username="***" password="***"-->
+      <!--factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"-->
+      <!--maxActive="20" maxIdle="10" maxWait="-1" />-->
+<!-- mysql连接 -->
+<!--<Resource name="ds_4" auth="Container" type="javax.sql.DataSource"-->
+      <!--driverClassName="com.mysql.jdbc.Driver"-->
+      <!--url="jdbc:mysql://IP:PORT/DATABASENAME?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"-->
+      <!--username="***" password="***"-->
+      <!--factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"-->
+      <!--maxActive="20" maxIdle="10" maxWait="-1" />-->
+<!--上面是tomcat7以及之前的配置,tomcat8有些微差别-->
+<!-- mysql连接 -->
+<!--<Resource name="ds_4" auth="Container" type="javax.sql.DataSource"-->
+    <!--driverClassName="com.mysql.jdbc.Driver"-->
+    <!--url="jdbc:mysql://IP:PORT/DATABASENAME?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"-->
+    <!--username="***" password="***"-->
+    <!--factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"-->
+    <!--maxTotal="20" maxIdle="10" maxWaitMillis="-1" />-->
