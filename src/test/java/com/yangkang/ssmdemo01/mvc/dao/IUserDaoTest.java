@@ -12,8 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration({"classpath:spring/spring-config.xml"})
 public class IUserDaoTest {
 
-    @Autowired
-    private IUserDao userDao;
+//    @Autowired
+//    private IUserDao userDao;
 
     @Autowired
     private IUserService userService;

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- 配置事务通知 -->
+    <tx:advice id="txAdvice6" transaction-manager="transactionManager6">
+        <tx:attributes>
+            <tx:method name="select*" read-only="true"/>
+            <tx:method name="update*" propagation="REQUIRED" read-only="false" rollback-for="Throwable"/>
+            <tx:method name="*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 配置织入(切面配置) -->
+    <aop:config>
+        <aop:pointcut id="pointCut6" expression="execution(* com.yangkang.ssmdemo01.mvc.service.impl.*ServiceImpl.*(..))"/>
+        <!-- 建立事务管理器对象，与切入点表达式的关系 -->
+        <aop:advisor advice-ref="txAdvice6" pointcut-ref="pointCut6"/>
+    </aop:config>
+</beans>
