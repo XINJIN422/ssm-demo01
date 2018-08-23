@@ -25,6 +25,8 @@
 
     <!-- 配置织入(切面配置) -->
     <aop:config>
+        <!--切入点配置,这边配置在控制层是无效的,只能配置在服务层;可以在spring-mvc.xml里配置注解式事务,再在controller类上注释,这样可以在控制层产生事务-->
+        <!--<aop:pointcut id="pointCut6" expression="execution(* com.yangkang.ssmdemo01.mvc.controller.*.*(..))"/>-->
         <aop:pointcut id="pointCut6" expression="execution(* com.yangkang.ssmdemo01.mvc.service.impl.*ServiceImpl.*(..))"/>
         <!-- 建立事务管理器对象，与切入点表达式的关系 -->
         <aop:advisor advice-ref="txAdvice6" pointcut-ref="pointCut6"/>

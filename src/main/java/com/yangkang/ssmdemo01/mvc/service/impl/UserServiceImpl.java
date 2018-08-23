@@ -3,6 +3,8 @@ package com.yangkang.ssmdemo01.mvc.service.impl;
 import com.yangkang.ssmdemo01.mvc.dao.impl.DaoSupport;
 import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.service.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -13,6 +15,7 @@ import java.util.Map;
 //@Transactional(propagation = Propagation.REQUIRED)
 public class UserServiceImpl implements IUserService {
 
+    private static Logger logger = LoggerFactory.getLogger("UserServiceImpl.class");
 //    @Resource
 //    private IUserDao userDao;
 
@@ -26,7 +29,18 @@ public class UserServiceImpl implements IUserService {
     @Override
 //    @Transactional(propagation = Propagation.REQUIRED)
     public User selectUser2(String userId) throws Exception {
+//        ((IUserService)AopContext.currentProxy()).selectUser5("param1","param2");
         return (User)dao.findForObject("UserSQL.selectUserById",userId);
+    }
+
+    @Override
+    public void selectUser4(String noUse) throws Exception {
+        logger.debug("============selectUser4=============");
+    }
+
+    @Override
+    public void selectUser5(String noUse, String noUse2) throws Exception {
+        logger.debug("============selectUser5=============");
     }
 
     @Override
