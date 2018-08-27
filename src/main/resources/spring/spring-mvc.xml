@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -10,10 +11,12 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/mvc
-       http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!-- 扫描web相关的bean -->
+    <!-- 当使用<context:component-scan/>后，即可将<context:annotation-config/>省去 -->
     <context:component-scan base-package="com.yangkang.ssmdemo01.mvc.controller"/>
+    <context:component-scan base-package="com.yangkang.ssmdemo01.system.interceptor"/>
 
     <!-- 开启SpringMVC注解模式 -->
     <mvc:annotation-driven/>
@@ -28,11 +31,16 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <!--扫描system包下所有定义的切面-->
-    <context:component-scan base-package="com.yangkang.ssmdemo01.system.controllerAspect"/>
+    <!-- 控制层的切面编程,看看和拦截器哪个先执行 -->
+    <beans:import resource="classpath:spring/spring-aspectj-cont.xml"/>
 
-    <!-- 启用AspectJ风格的切面编程注解。 proxy-target-class属性值决定是基于接口的还是基于类的代理被创建。如果proxy-target-class 属性值被设置为true，那么基于类的代理将起作用（这时需要cglib库）。如果proxy-target-class属值被设置为false或者这个属性被省略，那么标准的JDK 基于接口的代理将起作用,不过spring也会自动选择该用哪种代理-->
-    <!-- spring aop有缺陷,因为Spring AOP是基于动态代理对象的，那么如果target中的方法不是被代理对象调用的，那么就不会织入切面代码;必须先把代理对象暴露出去,AopContext.currentProxy()获得代理对象,再调用切入点方法 -->
-    <aop:aspectj-autoproxy expose-proxy="true"/>
-
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/static/**"/>
+            <mvc:exclude-mapping path="/pages/**"/>
+            <bean class="com.yangkang.ssmdemo01.system.interceptor.LogsInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>

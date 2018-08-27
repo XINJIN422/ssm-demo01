@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--扫描system包下所有定义的切面-->
+    <context:component-scan base-package="com.yangkang.ssmdemo01.system.controllerAspect"/>
+
+    <!-- 启用AspectJ风格的切面编程注解。 proxy-target-class属性值决定是基于接口的还是基于类的代理被创建。如果proxy-target-class 属性值被设置为true，那么基于类的代理将起作用（这时需要cglib库）。如果proxy-target-class属值被设置为false或者这个属性被省略，那么标准的JDK 基于接口的代理将起作用,不过spring也会自动选择该用哪种代理-->
+    <!-- spring aop有缺陷,因为Spring AOP是基于动态代理对象的，那么如果target中的方法不是被代理对象调用的，那么就不会织入切面代码;必须先把代理对象暴露出去,AopContext.currentProxy()获得代理对象,再调用切入点方法 -->
+    <aop:aspectj-autoproxy expose-proxy="true"/>
+
+</beans>

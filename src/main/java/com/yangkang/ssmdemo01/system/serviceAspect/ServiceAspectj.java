@@ -43,7 +43,7 @@ public class ServiceAspectj {
         logger.debug("===========before point cut run2==========="+noUse+noUse2);
     }
 
-    //JoinPoint参数
+    //JoinPoint参数(如果是@Around环绕通知,这边参数需要用ProceedingJoinPoint,这个类继承于JoinPoint,并暴露出proceed方法,从而可以执行目标方法;)
     @Before(value = "execution(* com.yangkang..*.impl.*.selectUser*(..))")
     public void beforeAdvice3(JoinPoint jp){
         String packageName = jp.getSignature().getDeclaringTypeName();
@@ -55,6 +55,7 @@ public class ServiceAspectj {
         for (Object arg:args){
             logger.debug("=========="+arg);
         }
+        logger.debug("=========="+jp.getSignature().toString());
     }
 
 //    //控制层切面

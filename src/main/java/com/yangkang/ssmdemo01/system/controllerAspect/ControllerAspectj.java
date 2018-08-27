@@ -6,6 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * ControllerAspectj
@@ -58,6 +62,8 @@ public class ControllerAspectj {
     //控制层切面
     @Before("execution(* com.yangkang.ssmdemo01.mvc.controller.*.*(..))")
     public void beforeAdvice4(){
+        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = sra.getRequest(); //获取request 可以从中获取参数或cookie
         logger.debug("===========before point cut run4===========");
     }
 }
