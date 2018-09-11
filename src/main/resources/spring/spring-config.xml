@@ -48,4 +48,7 @@
     <!-- AspectJ风格,注解式spring aop切面编程配置 -->
     <!-- 还有一种spring aop配置方法,就是使用<aop:config>标签在xml中配置 -->
     <!--<beans:import resource="classpath:spring/spring-aspectj-serv.xml" />-->
+
+    <!--Ehcache缓存管理-->
+    <beans:import resource="classpath:spring/cache/spring-ehcache.xml"/>
 </beans>

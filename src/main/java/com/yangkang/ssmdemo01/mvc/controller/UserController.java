@@ -34,7 +34,8 @@ public class UserController {
         response.getWriter().close();
         logger.debug("=============selectUser end!================");
 //        selectUser3();
-//        userService.selectUser4("test");
+//        userService.selectUser4("1");
+//        userService.selectUser2("1");
     }
 
 //    public void selectUser3(){

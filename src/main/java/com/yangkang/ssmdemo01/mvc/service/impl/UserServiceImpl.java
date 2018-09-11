@@ -5,6 +5,8 @@ import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,14 +30,18 @@ public class UserServiceImpl implements IUserService {
 
     @Override
 //    @Transactional(propagation = Propagation.REQUIRED)
+    @Cacheable(value = "users",key = "#userId")
     public User selectUser2(String userId) throws Exception {
 //        ((IUserService)AopContext.currentProxy()).selectUser5("param1","param2");
+        logger.debug("============selectUser2=============");
         return (User)dao.findForObject("UserSQL.selectUserById",userId);
     }
 
     @Override
+    @CacheEvict(value = "users",key = "#noUse")
     public void selectUser4(String noUse) throws Exception {
         logger.debug("============selectUser4=============");
+        int tmp = 1/0;  //测试事务回滚时,是否缓存也回滚(实验证明,缓存确实会回滚)
     }
 
     @Override
