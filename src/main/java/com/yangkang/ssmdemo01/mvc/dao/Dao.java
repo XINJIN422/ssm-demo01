@@ -17,6 +17,14 @@ public interface Dao {
     public Object save(String str,Object obj) throws Exception;
 
     /**
+     * 保存JavaBean对象
+     * @param javaBean
+     * @return
+     * @throws Exception
+     */
+    public Object saveBean(Object javaBean) throws Exception;
+
+    /**
      * 批量保存对象
      * @param str
      * @param objs
@@ -24,6 +32,22 @@ public interface Dao {
      * @throws Exception
      */
     public Object saveBatch(String str,List objs) throws Exception;
+
+    /**
+     * 批量保存JavaBean对象(集合中只能是同一种对象)
+     * @param javaBeans
+     * @return
+     * @throws Exception
+     */
+    public Object saveBeans(List<? extends Object> javaBeans) throws Exception;
+
+    /**
+     * 批量保存JavaBean对象(集合中可以为不同对象,并且针对大对象作分批次提交)
+     * @param javaBeans
+     * @return
+     * @throws Exception
+     */
+    public Object saveBeans2(List<? extends Object> javaBeans) throws Exception;
 
     /**
      * 修改对象

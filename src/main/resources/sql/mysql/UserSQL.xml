@@ -5,11 +5,12 @@
         select * from User WHERE id = #{userId}
     </select>
 
-    <select id="updateUsernameById" parameterType="java.util.HashMap">
+    <update id="updateUsernameById" parameterType="java.util.HashMap">
         update User set username = #{userName} where id = #{userId}
-    </select>
+    </update>
 
-    <select id="updateUsernameById2" parameterType="java.util.HashMap">
+    <update id="updateUsernameById2" parameterType="java.util.HashMap">
         update User set username = #{userName} where id = #{userId} and username = '杨过'
-    </select>
+    </update>
+
 </mapper>

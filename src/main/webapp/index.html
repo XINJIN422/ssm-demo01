@@ -9,6 +9,7 @@
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                console.log("wwwwwwwwww");
                 document.getElementById("test").innerHTML = xmlhttp.responseText;
             }
         }
@@ -28,10 +29,23 @@
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xmlhttp.send("userId=1&userName=杨过");
     }
+
+    function testInsertBatch() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("test").innerHTML = xmlhttp.responseText;
+            }
+        }
+        xmlhttp.open("POST","user/testInsertBatch",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("");
+    }
 </script>
 <body>
 <p id="test">Hello World!</p>
 <button type="button" onclick="selectUser()">showUser</button>
 <button type="button" onclick="updateUser()">updateUser</button>
+<button type="button" onclick="testInsertBatch()">testInsertBatch</button>
 </body>
 </html>

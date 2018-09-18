@@ -9,7 +9,7 @@ import java.util.Date;
  * @Type User2
  * @Desc 
  * @author YK
- * @date 2018-09-11 14:09:49
+ * @date 2018-09-14 16:50:01
  * 1.本类由工具类DbToBeanUtil自动生成
  * 2.默认读取resources下的jdbc.properties配置文件,也可以在main函数里设置覆盖相关属性
  * 3.不建议直接修改本类,必要时建议创建子类扩展
@@ -35,6 +35,8 @@ public class User2 implements Serializable {
     private Date regtime;
     @Column("REGIP")
     private String regip;
+    @Column("REMARK")
+    private String remark;
 
     public void setId(Integer id){
         this.id = id;
@@ -98,6 +100,14 @@ public class User2 implements Serializable {
 
     public String getRegip(){
         return regip;
+    }
+
+    public void setRemark(String remark){
+        this.remark = remark;
+    }
+
+    public String getRemark(){
+        return remark;
     }
 
 }
