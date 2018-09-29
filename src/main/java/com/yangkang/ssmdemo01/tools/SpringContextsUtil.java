@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * SpringContextsUtil
+ *
  * spring容器工具类,用以获得里面的bean
  *
  * @author yangkang
