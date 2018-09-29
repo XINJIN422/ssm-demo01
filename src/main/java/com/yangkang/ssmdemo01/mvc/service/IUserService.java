@@ -14,4 +14,7 @@ public interface IUserService {
     public int updateUser2(String userId, String userName) throws Exception;
     public int testInsertBatch(List<User2> userList) throws Exception;
     public int testInsertBatch2(List<User2> userList) throws Exception;
+    public int testInsertBatch2TransactionEnhanced(List<User2> userList) throws Exception;
+    public int testInsertBatch2TransactionEnhanced2(List<User2> userList) throws Exception;
+    public int testInsertBatch2TransactionEnhanced3(List<User2> userList) throws Exception;
 }

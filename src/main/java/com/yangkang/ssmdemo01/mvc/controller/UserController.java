@@ -92,15 +92,23 @@ public class UserController {
         //2.接下来测试大批量的数据执行效率
         // 2-1.第一种在service层循环遍历一个个插入,插入5001条数据耗时14388ms/5618ms/6171ms/6450ms/7905ms/7905ms/5840ms/7649ms,全程只有一个数据库连接会话被调用
         // 2-2.第二种在dao层通过动态生成sql一次性插入5001条数据,用时1350ms/1400ms,仅提交一次(如果对象过大可以拆开几次提交)
-        // 2-3.第三种在dao层分批次提交批量插入,扩展为可以插入不同的对象,插入5001条数据,设置提交1次,耗时13878ms/9299ms,
+        // 2-3.第三种在dao层分批次预提交批量插入,上面方法是一个数据源连接只预提交一次,正式提交一次,这种方法一个数据源连接预提交多次,正式提交一次,statement:created->executed->closed
+        //      并扩展为可以插入不同的对象,插入5001条数据,设置提交1次,耗时13878ms/9299ms,
         //      设置提交6次,耗时3840ms/3652ms,设置提交11次,耗时2980ms/3230ms,应该是比第二种长一点,比第一种短一点
-        // 2-4.第四种在service层将5001条数据分成6个线程,每个线程启用一个数据源连接进行插入,
+        // 2-4.第四种在service层将5001条数据分成6个线程,每个线程启用一个数据源连接进行插入,用时1382ms/429ms/420ms/508ms/298ms/196ms,
+        //      分成51个线程,用时1590ms,1278ms,968ms,598ms,1420ms,因为这边最大只有10个数据源连接,所以应该最大只有10个线程在同时运行,
+        //      其实分成10个进程,然后综合第二和第三种方式分次提交,并且主键也不要让mysql自增长生成,用多线程在java里生成,这样应该会更快一些
+        //      [多线程事务增强版]6个线程,耗时1720ms/467ms/760ms/258ms
+        //      [多线程事务增强版2]6个线程,耗时1415ms/368ms/567ms/237ms
+        //      [多线程事务增强版3]6个线程,耗时1360ms/594ms/508ms/270ms/255ms,缩小lock区间后,耗时1267ms,622ms,655ms,388ms,200ms,488ms,362ms
         int start = 1;
         long millis = new Date().getTime();
         while (start <= 5000){
             user2 = new User2();
             user2.setEmail(112233 + start + "@qq.com");
-//            if (start != 233)  //测试第三种主动提交是否会影响事务,结果是不会,有异常依然会回滚
+            //测试第三种主动提交是否会影响事务,结果是不会,有异常依然会回滚,异常报错在statement的executed阶段
+            //测试第四种多线程时是否会影响事务,结果是会,有异常其他线程也未回滚,需要修改,testInsertBatch2TransactionEnhanced增加了多线程的事务控制
+//            if (start != 1233)
                 user2.setPassword("112233");
             user2.setUsername("测试"+start);
             user2.setRole("test");
@@ -111,7 +119,11 @@ public class UserController {
             start++;
         }
         logger.debug("循环生成5000个对象用时------------" + (new Date().getTime() - millis) + "ms");     //生成对象用时17ms/5ms/3ms/2ms/3ms/5ms
-        int result = userService.testInsertBatch(user2List);
+//        int result = userService.testInsertBatch(user2List);
+//        int result = userService.testInsertBatch2(user2List);
+//        int result = userService.testInsertBatch2TransactionEnhanced(user2List);
+//        int result = userService.testInsertBatch2TransactionEnhanced2(user2List);
+        int result = userService.testInsertBatch2TransactionEnhanced3(user2List);
         if (result > 5000)
             response.getWriter().write("测试成功!\r\n");
         else

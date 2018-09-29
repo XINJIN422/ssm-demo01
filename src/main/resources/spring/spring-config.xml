@@ -51,4 +51,7 @@
 
     <!--Ehcache缓存管理-->
     <beans:import resource="classpath:spring/cache/spring-ehcache.xml"/>
+
+    <!-- 用于持有ApplicationContext,SpringContextsUtil.getBean('xxxx')的静态方法得到spring bean对象 -->
+    <bean class="com.yangkang.ssmdemo01.tools.SpringContextsUtil" lazy-init="false" />
 </beans>

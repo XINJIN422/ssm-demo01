@@ -41,6 +41,8 @@
         <property name="maxWait" value="${druid.maxWait}" />
         <property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
         <property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" />
+        <!--默认使用数据库自己的最大值-->
+        <!--<property name="maxEvictableIdleTimeMillis" value="18000000"/>-->
         <property name="testWhileIdle" value="false" /><!--yk-->
         <property name="testOnBorrow" value="false" />
         <property name="testOnReturn" value="false" />
