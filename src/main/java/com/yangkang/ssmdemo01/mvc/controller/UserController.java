@@ -101,6 +101,7 @@ public class UserController {
         //      [多线程事务增强版]6个线程,耗时1720ms/467ms/760ms/258ms
         //      [多线程事务增强版2]6个线程,耗时1415ms/368ms/567ms/237ms
         //      [多线程事务增强版3]6个线程,耗时1360ms/594ms/508ms/270ms/255ms,缩小lock区间后,耗时1267ms,622ms,655ms,388ms,200ms,488ms,362ms
+        //      [多线程事务增强版3+线程池]6个线程复用,耗时1920ms/784ms/393ms/529ms/195ms/294ms/172ms,线程死亡后耗时379ms
         int start = 1;
         long millis = new Date().getTime();
         while (start <= 5000){
@@ -123,7 +124,8 @@ public class UserController {
 //        int result = userService.testInsertBatch2(user2List);
 //        int result = userService.testInsertBatch2TransactionEnhanced(user2List);
 //        int result = userService.testInsertBatch2TransactionEnhanced2(user2List);
-        int result = userService.testInsertBatch2TransactionEnhanced3(user2List);
+//        int result = userService.testInsertBatch2TransactionEnhanced3(user2List);
+        int result = userService.testInsertBatch2TransactionEnhanced3AndThreadPool(user2List);
         if (result > 5000)
             response.getWriter().write("测试成功!\r\n");
         else

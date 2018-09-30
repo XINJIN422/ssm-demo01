@@ -54,4 +54,8 @@
 
     <!-- 用于持有ApplicationContext,SpringContextsUtil.getBean('xxxx')的静态方法得到spring bean对象 -->
     <bean class="com.yangkang.ssmdemo01.tools.SpringContextsUtil" lazy-init="false" />
+
+    <!--spring ioc默认为单例模式,这边可以不用scope;使用了静态工厂方法注入;-->
+    <bean id="batchInsertExecutorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool" lazy-init="true" scope="singleton" />
+
 </beans>

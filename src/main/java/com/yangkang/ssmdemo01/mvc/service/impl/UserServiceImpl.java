@@ -19,6 +19,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -35,6 +37,9 @@ public class UserServiceImpl implements IUserService {
 
     @Resource(name = "daoSupport")
     private Dao dao;
+
+    @Resource(name = "batchInsertExecutorService")
+    private ExecutorService executorService;
 
 //    @Resource(name = "transactionManager5")
 //    private DataSourceTransactionManager transactionManager;
@@ -400,6 +405,101 @@ public class UserServiceImpl implements IUserService {
         for (Thread oneThread : threadList)
             oneThread.join();
 
+        logger.debug("-----------批量插入测试END!-----------用时:" + (new Date().getTime() - millis) + "ms");
+        return atomicSum.intValue();
+    }
+
+    @Override
+    public int testInsertBatch2TransactionEnhanced3AndThreadPool(List<User2> userList) throws Exception {
+        //在第四种插入方法的事务增强版3的基础上,增加线程池管理并用了Callable与Future接口
+//        Runnable和Callable的区别是:
+//        (1)Callable规定的方法是call(),Runnable规定的方法是run().
+//        (2)Callable的任务执行后可返回值，而Runnable的任务是不能返回值得
+//        (3)call方法可以抛出异常，run方法不可以
+//        (4)运行Callable任务可以拿到一个Future对象，表示异步计算的结果。它提供了检查计算是否完成的方法，以等待计算的完成，并检索计算的结果。通过Future对象可以了解任务执行情况，可取消任务的执行，还可获取执行结果。
+        //常用的四大线程池:CachedThreadPool,FixedThreadPool,SingleThreadPool,ScheduledThreadPool;
+        // 源码都是利用new ThreadPoolExecutor来创建的
+//        ExecutorService的submit方法与execute方法区别:
+//        execute属于ExecutorService的父类Executor,入参只能是runable,而submit属于ExecutorService,入参可以是runable亦可以是callable,并且有返回值
+        //不能像下面那样写,多线程下不安全,属于懒汉式加载在多线程中的经典错误
+//        if (executorService == null)
+//            executorService = Executors.newCachedThreadPool();
+        logger.debug("-----------批量插入测试START!-----------");
+        long millis = new Date().getTime();
+        AtomicInteger atomicSum = new AtomicInteger(0);
+        AtomicBoolean atomicNeedrollback = new AtomicBoolean(false);
+        AtomicInteger atomicThreadNum = new AtomicInteger(0);
+        Lock lock = new ReentrantLock();
+        Condition waitForBranch = lock.newCondition();
+        Condition waitForMain = lock.newCondition();
+        //在方法中调用spring的编程式事务管理
+        PlatformTransactionManager transactionManager5 = (PlatformTransactionManager) SpringContextsUtil.getBean("transactionManager5", PlatformTransactionManager.class);
+        //局部内部类
+        class SaveBatchThread implements Callable {
+
+            private List<User2> separateUserList;
+
+            SaveBatchThread(List<User2> tmpUserList){
+                separateUserList = tmpUserList;
+            }
+
+            @Override
+            public List<User2> call() {
+                DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+                def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                TransactionStatus transactionStatus = transactionManager5.getTransaction(def);
+                try {
+                    int tmpResult = atomicSum.addAndGet((int) dao.saveBeans(separateUserList));
+                    lock.lock();
+                    try {
+                        if (tmpResult == userList.size())
+                            waitForBranch.signal();
+                        waitForMain.await();
+                    } finally {
+                        lock.unlock();
+                    }
+                    if (atomicNeedrollback.get())
+                        transactionManager5.rollback(transactionStatus);
+                    else
+                        transactionManager5.commit(transactionStatus);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    atomicNeedrollback.set(true);
+                    transactionManager5.rollback(transactionStatus);
+                    waitForBranch.signal();
+                    atomicThreadNum.decrementAndGet();
+                    return null;
+                }
+                atomicThreadNum.decrementAndGet();
+                return separateUserList;
+            }
+        };
+        //因为涉及到多线程的统一事务管理,所以这边新建的线程是不能超过数据源连接池的,以后可以和第三种分批预提交相结合来优化,防止出现一次提交的sql语句过长
+        //这边还有一个问题,因为增加了多线程事务管理,所以事务只会在所有线程都成功预提交的情况下才会正式提交,这样会产生相互等待占用超时情况,比如:
+        //  一个任务如果要6个线程同时成功预提交,而数据源只有10个,如果两个请求同时进来,各占了5个数据源连接,那就都提交不了了;所以最好还是应该在主线程里做插入成功批量状态修改的操作来保持事务,那样主线程与分线程不用相互来回阻塞,应该快一些;
+        //  那这边就只测试一下,一个请求完了60s内第二个请求过来会不会快一些,因为节省了创建线程的时间;
+        atomicThreadNum.set(userList.size()/1000 + 1);
+        //保存插入成功用户列表,在无多线程事务管理情况下,如果有某个线程插入失败,可以用来删除
+//        List<User2> insertedUserList = new CopyOnWriteArrayList<>();
+        int cursor = 0;
+        //如果用threadResult.get()会阻塞调用的线程,直到结果返回;改掉现在的多线程事务后可以利用cancel()方法,来关闭失败了一次线程的某次请求的其他线程,尽快释放线程,释放数据源连接,达到整体的高效;
+//        Future<List<User2>> threadResult ;
+        //这里的executorService是用的可缓存线程池,创建的是非核心进程,60s的空闲存活期
+        while (cursor + 1000 <= userList.size())
+            executorService.submit(new SaveBatchThread(userList.subList(cursor,cursor += 1000)));
+        if (cursor < userList.size())
+            executorService.submit(new SaveBatchThread(userList.subList(cursor,userList.size())));
+        lock.lock();
+        try {
+            waitForBranch.await();
+            waitForMain.signalAll();
+        }finally {
+            lock.unlock();
+        }
+
+        while (atomicThreadNum.intValue() > 0){
+            //轮询代替join
+        }
         logger.debug("-----------批量插入测试END!-----------用时:" + (new Date().getTime() - millis) + "ms");
         return atomicSum.intValue();
     }
