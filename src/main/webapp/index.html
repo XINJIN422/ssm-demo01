@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>test</title>
 </head>
+<script type="text/javascript" src="./statics/js/aes.js"></script>
+<script type="text/javascript" src="./statics/js/rsa.js"></script>
+<script type="text/javascript" src="./statics/js/sha256.js"></script>
+<!-- 最全的加解密算法库地址https://github.com/brix/crypto-js/tree/develop/src,以后缺啥补啥 -->
 <script>
     function selectUser() {
         var xmlhttp = new XMLHttpRequest();
@@ -41,11 +45,119 @@
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xmlhttp.send("");
     }
+
+    //测试对称式加密传输方式
+    //js参考地址 https://github.com/brix/crypto-js
+    function testAesEncTrans() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("test").innerHTML = xmlhttp.responseText;
+            }
+        }
+        xmlhttp.open("POST","encrypt/testAesEncTrans",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("password="+encrypt("asd123"));
+    }
+
+    /**
+     * AES加密（需要先加载aes.js文件）
+     * @param word
+     * @returns {*}
+     */
+    function encrypt(word){
+        // var word = "hello,大侠!";
+        console.log("加密之前:",word);
+        var key = CryptoJS.enc.Base64.parse("GXyq3KiXdoulN/JJx7dDOQ==");
+        var srcs = CryptoJS.enc.Utf8.parse(word);CryptoJS.RSA.encrypt();
+        var encrypted = CryptoJS.AES.encrypt(srcs, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});
+        console.log("加密之后:",encrypted.toString());
+        return encrypted.toString();
+    }
+
+    /**
+     * AES解密
+     * @param word
+     * @returns {*}
+     */
+    function decrypt(){
+        var word = encrypt();
+        console.log("解密之前:",word);
+        var key = CryptoJS.enc.Base64.parse("GXyq3KiXdoulN/JJx7dDOQ==");
+        var decrypt = CryptoJS.AES.decrypt(word, key, {mode:CryptoJS.mode.ECB,padding: CryptoJS.pad.Pkcs7});
+        console.log("解密之后:",CryptoJS.enc.Utf8.stringify(decrypt).toString());
+        return CryptoJS.enc.Utf8.stringify(decrypt).toString();
+    }
+
+    var cliPubKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCDkL9/McJJUTCpwCT++8269whGWY3SdWvXrgEwvbclEQGlJAD74jU9ZOKthUh0PXSoQHuaV0JheU0tYTDhjq/0bic0DwGSjkC0D2xZetCp2sgrKSwNXTlUSuxVOsE8pPtTYQ6WHQ90ikaNywuVV//gnWpU/BvuHrixVk5Hl2co0QIDAQAB";
+    var cliPriKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIOQv38xwklRMKnAJP77zbr3CEZZjdJ1a9euATC9tyURAaUkAPviNT1k4q2FSHQ9dKhAe5pXQmF5TS1hMOGOr/RuJzQPAZKOQLQPbFl60KnayCspLA1dOVRK7FU6wTyk+1NhDpYdD3SKRo3LC5VX/+CdalT8G+4euLFWTkeXZyjRAgMBAAECgYAeaNqaX7n0kFubINpsRW9sA6VZ/WEWgCWJGKMVzQQEAUZMEWJY1hRQOH1cdi4lD/9i1GS9a+Xf+dWo44oU2JI6q9BAbQCxZ8RWpgaA2cVqCmPbOaYsO0mEi+bH/sv0HOwkOhOc2PSCPbcIm6JL1XJ++kHQXPm4cO6Xlm+DMgBPQQJBAMzsG+cwcivEQosityyYT/cYbb94i3DjRwfomQak+aoNcyhtH7G/chg9+4kl1YJ6Xu8Mqtc1M9L7dAao02SEv90CQQCkW8790Y8a76j55EDjx6pnZ/1E50HQY03c809otC0ywyIpOH+aaBawEYXXckxPf+N8MYucC1fCH2KtJuE2IzeFAkEAr8Fd2TaK5ZDJhe37busfwo0YK91msyarWFQdUz6Rx1EL0MNvKJNLdxFKOIHTkroDzEFwEW5XCYCTLdcEn7TfnQJAd5usZgA0AWk5cimOo3TxaHE/2f3lYk5yIoIaXtsILXHeEVthWS+4mwcVfLVcHVq3ZPD1ZWjHw6hteg7aRDiatQJACvhu5hsLG1i/s/WB3W40amaRrm8OCTGiUUfwPlhPRrSPi3nVKn23lLOo2w+/1nuOgcsEFqYrfiwumSSPppIsdg==";
+    var servPubKey;
+    //客户端与服务器端交换公钥
+    function exchangePublicKey(){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("test").innerHTML = xmlhttp.responseText;
+                servPubKey = xmlhttp.responseText;
+                console.log(servPubKey);
+            }
+        }
+        xmlhttp.open("POST","encrypt/exchangePublicKey",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("cliPubKey="+cliPubKey.replace(/\+/g, "%2B"));
+    }
+    //测试非对称式加密传输方式
+    function testRsaEncTrans(){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                if (xmlhttp.responseText != '返回结果加密失败!'){
+                    var rsaDe = new JSEncrypt();
+                    rsaDe.setPrivateKey(cliPriKey);
+                    var decryptedRes = rsaDe.decrypt(xmlhttp.responseText);
+                }else{
+                    var decryptedRes = xmlhttp.responseText;
+                }
+
+                document.getElementById("test").innerHTML = decryptedRes;
+            }
+        }
+
+        var rsaEn = new JSEncrypt();
+        rsaEn.setPublicKey(servPubKey);
+        var encryptedPw = rsaEn.encrypt("asd123");
+
+        xmlhttp.open("POST","encrypt2/testRsaEncTrans",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("password="+encryptedPw.toString().replace(/\+/g, "%2B"));    //需要对+号进行编码处理,否则后台会变成空格
+    }
+    //测试数字签名与验签
+    function testSignature(){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("test").innerHTML = xmlhttp.responseText;
+            }
+        }
+
+        var sign = new JSEncrypt();
+        sign.setPrivateKey(cliPriKey);
+        var signStr = sign.sign("asd123", CryptoJS.SHA256, "sha256");
+
+        xmlhttp.open("POST","encrypt2/testSignature",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("password=asd123&sign="+signStr.toString().replace(/\+/g, "%2B"));    //需要对+号进行编码处理,否则后台会变成空格
+    }
+
 </script>
 <body>
 <p id="test">Hello World!</p>
 <button type="button" onclick="selectUser()">showUser</button>
 <button type="button" onclick="updateUser()">updateUser</button>
 <button type="button" onclick="testInsertBatch()">testInsertBatch</button>
+<button type="button" onclick="testAesEncTrans()">testAesEncTrans</button>
+<button type="button" onclick="exchangePublicKey()">exchangePublicKey</button>
+<button type="button" onclick="testRsaEncTrans()">testRsaEncTrans</button>
+<button type="button" onclick="testSignature()">testSignature</button>
 </body>
 </html>
