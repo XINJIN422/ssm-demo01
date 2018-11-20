@@ -11,7 +11,7 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:spring/spring-config.xml</param-value>
   </context-param>
-  <!-- web容器启动监听器 -->
+  <!-- spring web容器启动监听器 -->
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
@@ -27,6 +27,22 @@
   </filter>
   <filter-mapping>
     <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!--shiro安全过滤器(核心)-->
+  <!-- 配置由Spring提供的过滤器，用于整合shiro框架 -->
+  <!-- 在项目启动的过程中，当前过滤器会从Spring工厂中提取同名对象 -->
+  <filter>
+    <filter-name>shiroFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <init-param>
+      <param-name>targetFilterLifecycle</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>shiroFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -79,7 +95,8 @@
   <!--</filter-mapping>-->
 
   <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
+    <!--<welcome-file>index.html</welcome-file>-->
+    <welcome-file>login.html</welcome-file>
   </welcome-file-list>
 
 </web-app>

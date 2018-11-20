@@ -1,6 +1,7 @@
 package com.yangkang.ssmdemo01.mvc.service.impl;
 
 import com.yangkang.ssmdemo01.mvc.dao.Dao;
+import com.yangkang.ssmdemo01.mvc.entity.ShiroUser;
 import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.entity.User2;
 import com.yangkang.ssmdemo01.mvc.service.IUserService;
@@ -502,5 +503,15 @@ public class UserServiceImpl implements IUserService {
         }
         logger.debug("-----------批量插入测试END!-----------用时:" + (new Date().getTime() - millis) + "ms");
         return atomicSum.intValue();
+    }
+
+    @Override
+    public ShiroUser findByUsername(String username) {
+        try {
+            return (ShiroUser)dao.findForObject("UserSQL.findByShiroUsername", username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

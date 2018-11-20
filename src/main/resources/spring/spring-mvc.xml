@@ -24,22 +24,26 @@
     <!-- 静态资源默认servlet配置 -->
     <mvc:default-servlet-handler/>
 
-    <!-- 配置jsp 显示ViewResolver -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/pages/"/>
-        <property name="suffix" value=".jsp"/>
-    </bean>
+    <!-- 静态页面html映射 -->
+    <mvc:resources mapping="/**/*.html" location="/"/>
+
+    <!-- 配置jsp视图解析器 显示ViewResolver 在上边的解析错误时使用-->
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+        <!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+        <!--<property name="prefix" value="/pages/"/>-->
+        <!--<property name="suffix" value=".jsp"/>-->
+    <!--</bean>-->
 
     <!-- 控制层的切面编程,看看和拦截器哪个先执行 -->
     <beans:import resource="classpath:spring/spring-aspectj-cont.xml"/>
 
-    <!-- 拦截器 -->
+    <!-- 拦截器,打印日志 -->
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
             <mvc:exclude-mapping path="/static/**"/>
             <mvc:exclude-mapping path="/pages/**"/>
+            <mvc:exclude-mapping path="/*.html"/>
             <bean class="com.yangkang.ssmdemo01.system.interceptor.LogsInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>

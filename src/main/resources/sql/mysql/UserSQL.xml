@@ -13,4 +13,7 @@
         update User set username = #{userName} where id = #{userId} and username = '杨过'
     </update>
 
+    <select id="findByShiroUsername" parameterType="java.lang.String" resultType="com.yangkang.ssmdemo01.mvc.entity.ShiroUser">
+        select id, organization_id, username, password, salt, role_ids as roleIdsStr, locked from shiro_user where username= #{username}
+    </select>
 </mapper>

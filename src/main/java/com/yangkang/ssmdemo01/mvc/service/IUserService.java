@@ -1,5 +1,6 @@
 package com.yangkang.ssmdemo01.mvc.service;
 
+import com.yangkang.ssmdemo01.mvc.entity.ShiroUser;
 import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.entity.User2;
 
@@ -18,4 +19,6 @@ public interface IUserService {
     public int testInsertBatch2TransactionEnhanced2(List<User2> userList) throws Exception;
     public int testInsertBatch2TransactionEnhanced3(List<User2> userList) throws Exception;
     public int testInsertBatch2TransactionEnhanced3AndThreadPool(List<User2> userList) throws Exception;
+
+    public ShiroUser findByUsername(String username);
 }

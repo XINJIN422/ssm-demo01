@@ -58,4 +58,6 @@
     <!--spring ioc默认为单例模式,这边可以不用scope;使用了静态工厂方法注入;-->
     <bean id="batchInsertExecutorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool" lazy-init="true" scope="singleton" />
 
+    <!--引入shiro安全框架-->
+    <beans:import resource="classpath:spring/shiro/spring-shiro.xml"/>
 </beans>

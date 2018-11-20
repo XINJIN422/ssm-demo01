@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.entity.User2;
 import com.yangkang.ssmdemo01.mvc.service.IUserService;
+import com.yangkang.ssmdemo01.tools.SpringContextsUtil;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,5 +136,28 @@ public class UserController {
         else
             response.getWriter().write("测试失败!\r\n");
         response.getWriter().close();
+    }
+
+    @RequestMapping("/login")
+    public String testShiroAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("GBK");       //chrome浏览器直接显示文本默认gbk,懒得下插件改编码格式了
+        String exceptionClassName = (String)request.getAttribute(
+                ((FormAuthenticationFilter)SpringContextsUtil.getBean("formAuthenticationFilter", FormAuthenticationFilter.class))
+                .getFailureKeyAttribute());
+        String error = null;
+        if(UnknownAccountException.class.getName().equals(exceptionClassName)) {
+            error = "用户名/密码错误";
+        } else if(IncorrectCredentialsException.class.getName().equals(exceptionClassName)) {
+            error = "用户名/密码错误";
+        } else if(exceptionClassName != null) {
+            error = "其他错误：" + exceptionClassName;
+        }
+        if (error != null){
+            response.getWriter().write(error + "\r\n");
+            response.getWriter().close();
+            return null;
+        } else {
+            return "redirect:../login.html";
+        }
     }
 }
