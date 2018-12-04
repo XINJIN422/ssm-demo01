@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--spring与quartz定时任务整合-->
+    <!--含有具体执行内容的类-->
+    <bean id="myJob" class="com.yangkang.ssmdemo01.quartz.MyJob"/>
+
+    <!--配置作业类: 定义调用对象和调用对象方法-->
+    <bean id="jobTask0" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <!--也可以在这指定job的name和group,默认为beanname和DEFAULT-->
+        <property name="targetObject" ref="myJob"/>
+        <property name="targetMethod" value="testCronTask"/>
+        <!--是否并发调度-->
+        <property name="concurrent" value="true"/>
+    </bean>
+
+    <bean id="jobTask1" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="myJob"/>
+        <property name="targetMethod" value="testCronTask"/>
+        <!--是否并发调度-->
+        <property name="concurrent" value="false"/>
+    </bean>
+
+    <!--配置作业触发器1: 定义周期任务-->
+    <bean id="jobTrigger0" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+        <!--也可以在这指定trigger的name和group,默认为beanname和DEFAULT-->
+        <property name="jobDetail" ref="jobTask0"/>
+        <property name="startDelay" value="0"/> <!--触发器实例化之后,0秒后立即启动-->
+        <property name="repeatInterval" value="120000"/>    <!--执行的时间间隔:2min-->
+    </bean>
+
+    <!--配置作业触发器2: 定义定时任务-->
+    <bean id="jobTrigger1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <!--也可以在这指定trigger的name和group,默认为beanname和DEFAULT-->
+        <property name="jobDetail" ref="jobTask1"/>
+        <property name="cronExpression" value="0 0/1 * * * ?"/> <!--每一分钟触发一次,表达式:秒 分 时 日 月 星期 (年)-->
+    </bean>
+
+    <!--配置调度工厂(lazy-init默认为false,即启动便初始化-->
+    <bean id="scheduler1" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="false" >
+        <property name="triggers">
+            <list>
+                <ref bean="jobTrigger0"/>
+                <ref bean="jobTrigger1"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--动态管理定时任务-->
+    <bean id="quartzManager" class="com.yangkang.ssmdemo01.quartz.QuartzManager" lazy-init="false" init-method="startJobs">
+        <property name="scheduler" ref="scheduler1"/>
+    </bean>
+</beans>

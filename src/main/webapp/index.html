@@ -13,6 +13,7 @@
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                debugger;
                 console.log("wwwwwwwwww");
                 document.getElementById("test").innerHTML = xmlhttp.responseText;
             }

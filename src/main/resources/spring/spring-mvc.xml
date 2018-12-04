@@ -47,4 +47,5 @@
             <bean class="com.yangkang.ssmdemo01.system.interceptor.LogsInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
+
 </beans>

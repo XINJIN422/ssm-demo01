@@ -183,7 +183,7 @@
       <artifactId>spring-aop</artifactId>
       <version>${spring.version}</version>
     </dependency>
-    <!-- spring对于缓存功能封装的接口 -->
+    <!-- spring对于缓存功能封装的接口,还有定时任务quartz整合的接口 -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
@@ -201,6 +201,12 @@
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>2.3.28</version>
+    </dependency>
+    <!-- 定时任务quartz -->
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>2.2.3</version>
     </dependency>
   </dependencies>
 
