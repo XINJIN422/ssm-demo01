@@ -16,4 +16,44 @@
     <select id="findByShiroUsername" parameterType="java.lang.String" resultType="com.yangkang.ssmdemo01.mvc.entity.ShiroUser">
         select id, organization_id, username, password, salt, role_ids as roleIdsStr, locked from shiro_user where username= #{username}
     </select>
+
+    <update id="testOutFile">
+        SELECT
+          *
+        FROM
+          (SELECT
+            'id',
+            'email',
+            'password',
+            'username',
+            'role',
+            'status',
+            'regtime',
+            'regip'
+          UNION
+          ALL
+          SELECT
+            *
+          FROM
+            USER
+          WHERE username = '杨康') colTab INTO OUTFILE 'D:/WorkFile/TMP/auto.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+    </update>
+
+    <update id="testInFile">
+        LOAD DATA INFILE 'D:/WorkFile/TMP/auto.csv' INTO TABLE USER CHARACTER SET utf8 FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES (
+          @idTMP,
+          email,
+          PASSWORD,
+          username,
+          role,
+          STATUS,
+          regtime,
+          @regipTMP
+        ) SET regip = IF (
+          @regipTMP IS NULL,
+          "3333",
+          @regipTMP
+        ),
+        id = IF(@idTMP = '', NULL, @idTMP)
+    </update>
 </mapper>

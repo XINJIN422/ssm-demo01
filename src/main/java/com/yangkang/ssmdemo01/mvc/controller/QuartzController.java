@@ -42,6 +42,6 @@ public class QuartzController {
         //获取所有正在运行的任务   --是指正在执行的任务,方法正被调用
 //        quartzManager.getAllRunningJobs();
         //立即执行一次某任务 --之后执行的时间还是按照原来的时间间隔来,这一次并不影响
-        quartzManager.runJobOnce("jobTask2", null);
+        quartzManager.runJobOnce("jobTask0", null);
     }
 }

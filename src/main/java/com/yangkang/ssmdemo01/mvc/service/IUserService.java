@@ -21,4 +21,6 @@ public interface IUserService {
     public int testInsertBatch2TransactionEnhanced3AndThreadPool(List<User2> userList) throws Exception;
 
     public ShiroUser findByUsername(String username);
+    public int testOutFile();
+    public int testInFile();
 }

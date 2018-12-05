@@ -105,7 +105,7 @@ public interface Dao {
 
     /**
      * 查找对象封装成map
-     * @param sql
+     * @param str
      * @param obj
      * @param key
      * @param value

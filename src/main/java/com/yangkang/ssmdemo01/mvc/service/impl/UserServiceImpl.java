@@ -514,4 +514,24 @@ public class UserServiceImpl implements IUserService {
         }
         return null;
     }
+
+    @Override
+    public int testOutFile() {
+        try {
+            return (int)dao.update("UserSQL.testOutFile", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    @Override
+    public int testInFile() {
+        try {
+            return (int)dao.update("UserSQL.testInFile", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 }
