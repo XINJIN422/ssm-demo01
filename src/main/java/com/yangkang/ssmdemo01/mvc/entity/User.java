@@ -1,15 +1,38 @@
 package com.yangkang.ssmdemo01.mvc.entity;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvDate;
+import com.univocity.parsers.annotations.Format;
+import com.univocity.parsers.annotations.Parsed;
+
 import java.util.Date;
 
 public class User {
+    @Parsed
+    @CsvBindByName
     private long id;
+    @Parsed
+    @CsvBindByName
     private String email;
+    @Parsed
+    @CsvBindByName
     private String password;
+    @Parsed
+    @CsvBindByName
     private String username;
+    @Parsed
+    @CsvBindByName
     private String role;
+    @Parsed
+    @CsvBindByName
     private int status;
+    @Parsed(field = "regtime")
+    @Format(formats = "yyyy-MM-dd HH:mm:ss")
+    @CsvBindByName(column = "regtime")
+    @CsvDate("yyyy-MM-dd HH:mm:ss")
     private Date regTime;
+    @Parsed(field = "regip")
+    @CsvBindByName(column = "regip")
     private String regIp;
 
     public long getId() {

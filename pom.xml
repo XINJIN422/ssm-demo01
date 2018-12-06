@@ -208,6 +208,18 @@
       <artifactId>quartz</artifactId>
       <version>2.2.3</version>
     </dependency>
+    <!-- 解析csv文件工具 -->
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>4.4</version>
+    </dependency>
+    <!-- 另一个解析csv文件工具 -->
+    <dependency>
+      <groupId>com.univocity</groupId>
+      <artifactId>univocity-parsers</artifactId>
+      <version>2.7.6</version>
+    </dependency>
   </dependencies>
 
   <build>

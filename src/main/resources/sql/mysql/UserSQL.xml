@@ -36,11 +36,11 @@
             *
           FROM
             USER
-          WHERE username = '杨康') colTab INTO OUTFILE 'D:/WorkFile/TMP/auto.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
+          WHERE username = '杨康') colTab INTO OUTFILE 'D:/WorkFile/TMP/auto.csv' FIELDS TERMINATED BY ',' ESCAPED BY '"' ENCLOSED BY '"' LINES TERMINATED BY '\r\n'
     </update>
 
     <update id="testInFile">
-        LOAD DATA INFILE 'D:/WorkFile/TMP/auto.csv' INTO TABLE USER CHARACTER SET utf8 FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES (
+        LOAD DATA INFILE 'D:/WorkFile/TMP/auto.csv' INTO TABLE USER CHARACTER SET utf8 FIELDS TERMINATED BY ',' ESCAPED BY '"' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES (
           @idTMP,
           email,
           PASSWORD,
