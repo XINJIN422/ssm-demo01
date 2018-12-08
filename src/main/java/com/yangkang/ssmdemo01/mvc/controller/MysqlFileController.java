@@ -27,7 +27,7 @@ import java.util.List;
  * MysqlFileController
  * 测试mybatis调用sql语句,导出csv文件和导入csv文件
  * 测试OpenCSV读取并解析csv数据文件的接口
- * 测试UnivocityParse读取并解析csv数据文件的接口
+ * 测试UnivocityParsers读取并解析csv数据文件的接口
  *
  * @author yangkang
  * @date 2018/12/5
@@ -87,8 +87,8 @@ public class MysqlFileController {
         in2.close();
 
         //1600行数据
-//        OpenCSV解析方式1用时:----------68ms
-//        OpenCSV解析方式2用时:----------456ms
+//        OpenCSV解析方式1用时:----------68ms/61ms/5ms
+//        OpenCSV解析方式2用时:----------456ms/268ms/81ms
     }
 
     @RequestMapping("/testUnivocityParseReader")
@@ -133,8 +133,8 @@ public class MysqlFileController {
         in2.close();
 
         //1600行数据
-//        UnivocityParser解析方式1用时:----------75ms
-//        UnivocityParser解析方式2用时:----------82ms
+//        UnivocityParsers解析方式1用时:----------117ms/75ms/16ms
+//        UnivocityParsers解析方式2用时:----------191ms/82ms/35ms
     }
 
 }

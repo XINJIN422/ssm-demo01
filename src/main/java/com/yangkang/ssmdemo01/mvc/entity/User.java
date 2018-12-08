@@ -5,9 +5,10 @@ import com.opencsv.bean.CsvDate;
 import com.univocity.parsers.annotations.Format;
 import com.univocity.parsers.annotations.Parsed;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class User {
+public class User implements Serializable{
     @Parsed
     @CsvBindByName
     private long id;

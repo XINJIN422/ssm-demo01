@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cache="http://www.springframework.org/schema/cache" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <description>redis缓存配置管理文件</description>
+
+    <!--配置redis连接池-->
+    <beans:import resource="classpath:spring/cache/redis-pool.xml"/>
+    <!--配置redis连接工厂-->
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+          p:host-name="${redis.cache.host}" p:port="${redis.cache.port}" p:password="${redis.password}"
+          p:poolConfig-ref="redisPoolConfig" p:usePool="${redis.pool.use}"/>
+    <!--初始化redis操作类-->
+    <bean id="redisCacheWriter" class="org.springframework.data.redis.cache.DefaultRedisCacheWriter">
+        <constructor-arg name="connectionFactory" ref="redisConnectionFactory"/>
+    </bean>
+    <!--默认的配置会初始化一个永不过期，使用StringRedisSerializer序列化key，使用JdkSerializationRedisSerializer序列化value的配置-->
+    <bean id="defaultRedisCacheConfiguration" class="org.springframework.data.redis.cache.RedisCacheConfiguration"
+          factory-method="defaultCacheConfig"/>
+    <!--配置默认缓存-->
+    <bean id="defaultRedisCache" class="org.springframework.data.redis.cache.RedisCache">
+        <constructor-arg name="name" value="default"/>
+        <constructor-arg name="cacheWriter" ref="redisCacheWriter"/>
+        <constructor-arg name="cacheConfig" ref="defaultRedisCacheConfiguration"/>
+    </bean>
+    <!--交给spring管理-->
+    <bean id="redisCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <ref bean="defaultRedisCache"/>
+            </set>
+        </property>
+    </bean>
+    <!--开启spring缓存注解-->
+    <cache:annotation-driven cache-manager="redisCacheManager"/>
+</beans>

@@ -51,7 +51,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
 //    @Transactional(propagation = Propagation.REQUIRED)
-    @Cacheable(value = "users",key = "#userId")
+//    @Cacheable(value = "users",key = "#userId")   //ehcache用
+    @Cacheable(value = "default",key = "#userId")   //redis用
     public User selectUser2(String userId) throws Exception {
 //        ((IUserService)AopContext.currentProxy()).selectUser5("param1","param2");
         logger.debug("============selectUser2=============");
@@ -59,7 +60,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @CacheEvict(value = "users",key = "#noUse")
+//    @CacheEvict(value = "users",key = "#noUse")   //ehcache用
+    @CacheEvict(value = "default",key = "#noUse")   //redis用
     public void selectUser4(String noUse) throws Exception {
         logger.debug("============selectUser4=============");
         int tmp = 1/0;  //测试事务回滚时,是否缓存也回滚(实验证明,缓存确实会回滚)
@@ -72,7 +74,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    @CacheEvict(value = "users", key = "#userId")
+//    @CacheEvict(value = "users", key = "#userId")   //ehcache用
+    @CacheEvict(value = "default", key = "#userId")   //redis用
     public int updateUser(String userId, String userName) throws Exception {
         Map params = new HashMap<String,String>();
         params.put("userId",userId);
@@ -82,7 +85,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    @CacheEvict(value = "users", key = "#userId")
+//    @CacheEvict(value = "users", key = "#userId")   //ehcache用
+    @CacheEvict(value = "default", key = "#userId")   //redis用
     public int updateUser2(String userId, String userName) throws Exception {
         Map params = new HashMap<String,String>();
         params.put("userId",userId);
