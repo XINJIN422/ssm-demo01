@@ -15,16 +15,16 @@
     <context:component-scan base-package="com.yangkang.ssmdemo01.mvc.dao"/>
     <context:component-scan base-package="com.yangkang.ssmdemo01.mvc.service"/>
 
-    <!-- 配置数据库相关参数properties的属性：${url} (因为有两个property-placeholder了,所以合并到一处) -->
-    <!--<context:property-placeholder location="classpath:jdbc.properties"/>-->
-    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:redis.properties</value>
-                <value>classpath:jdbc.properties</value>
-            </list>
-        </property>
-    </bean>
+    <!-- 配置数据库相关参数properties的属性：${url} (因为有两个property-placeholder了,所以必须带上ignore-unresolvable="true"属性或者合并到一处) -->
+    <context:property-placeholder location="classpath:jdbc.properties" ignore-unresolvable="true"/>
+    <!--<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+        <!--<property name="locations">-->
+            <!--<list>-->
+                <!--<value>classpath:redis.properties</value>-->
+                <!--<value>classpath:jdbc.properties</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
 
     <!-- 引入jdbc配置文件的第二种方法 -->
     <!--<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
@@ -61,7 +61,8 @@
     <!--<beans:import resource="classpath:spring/cache/spring-ehcache.xml"/>-->
 
     <!--redis缓存-->
-    <beans:import resource="classpath:spring/cache/spring-rediscache.xml"/>
+    <!--<beans:import resource="classpath:spring/cache/spring-rediscache.xml"/>-->
+    <beans:import resource="classpath:spring/cache/spring-rediscache2.xml"/>
 
     <!-- 用于持有ApplicationContext,SpringContextsUtil.getBean('xxxx')的静态方法得到spring bean对象 -->
     <bean class="com.yangkang.ssmdemo01.tools.SpringContextsUtil" lazy-init="false" />

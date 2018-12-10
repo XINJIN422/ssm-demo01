@@ -8,7 +8,7 @@
         http://www.springframework.org/schema/cache
         http://www.springframework.org/schema/cache/spring-cache.xsd">
 
-    <description>redis缓存配置管理文件</description>
+    <description>redis缓存配置管理文件-基础默认版</description>
 
     <!--配置redis连接池-->
     <beans:import resource="classpath:spring/cache/redis-pool.xml"/>
