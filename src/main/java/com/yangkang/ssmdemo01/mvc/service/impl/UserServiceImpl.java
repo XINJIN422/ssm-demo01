@@ -5,11 +5,13 @@ import com.yangkang.ssmdemo01.mvc.entity.ShiroUser;
 import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.entity.User2;
 import com.yangkang.ssmdemo01.mvc.service.IUserService;
+import com.yangkang.ssmdemo01.redis.MyRedisCacheUtil;
 import com.yangkang.ssmdemo01.tools.SpringContextsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -42,6 +44,9 @@ public class UserServiceImpl implements IUserService {
     @Resource(name = "batchInsertExecutorService")
     private ExecutorService executorService;
 
+    @Resource
+    private MyRedisCacheUtil myRedisCacheUtil;
+
 //    @Resource(name = "transactionManager5")
 //    private DataSourceTransactionManager transactionManager;
 
@@ -52,7 +57,14 @@ public class UserServiceImpl implements IUserService {
     @Override
 //    @Transactional(propagation = Propagation.REQUIRED)
 //    @Cacheable(value = "users",key = "#userId")   //ehcache用
-    @Cacheable(value = "default",key = "#userId")   //redis用
+//    @Cacheable(value = "default",key = "#userId")   //redis用
+//    @Cacheable(value = "default",keyGenerator = "keyGenerator")   //redis用,自定义keygenerator
+    @Caching(cacheable = {
+            @Cacheable(value = "users", keyGenerator = "keyGenerator2"),
+            @Cacheable(value = "users2", keyGenerator = "keyGenerator2"),
+            @Cacheable(value = "default", keyGenerator = "keyGenerator"),
+            @Cacheable(value = "users", key = "#userId")
+    })      //组合注解,一条数据放到多个缓存中去;命中匹配的时候按照定义的顺序来!
     public User selectUser2(String userId) throws Exception {
 //        ((IUserService)AopContext.currentProxy()).selectUser5("param1","param2");
         logger.debug("============selectUser2=============");
@@ -422,6 +434,7 @@ public class UserServiceImpl implements IUserService {
 //        (2)Callable的任务执行后可返回值，而Runnable的任务是不能返回值得
 //        (3)call方法可以抛出异常，run方法不可以
 //        (4)运行Callable任务可以拿到一个Future对象，表示异步计算的结果。它提供了检查计算是否完成的方法，以等待计算的完成，并检索计算的结果。通过Future对象可以了解任务执行情况，可取消任务的执行，还可获取执行结果。
+        //主线程获取子线程的异常方法:子线程不要捕获,主线程加子线程的时候保存返回的Future对象集合,之后遍历该集合,使用Future.get()方法;就可以获得该异常,主线程捕获后就可以处理了;
         //常用的四大线程池:CachedThreadPool,FixedThreadPool,SingleThreadPool,ScheduledThreadPool;
         // 源码都是利用new ThreadPoolExecutor来创建的
 //        ExecutorService的submit方法与execute方法区别:
@@ -504,6 +517,7 @@ public class UserServiceImpl implements IUserService {
 
         while (atomicThreadNum.intValue() > 0){
             //轮询代替join
+            Thread.sleep(100);
         }
         logger.debug("-----------批量插入测试END!-----------用时:" + (new Date().getTime() - millis) + "ms");
         return atomicSum.intValue();
@@ -537,5 +551,16 @@ public class UserServiceImpl implements IUserService {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void testJedisTransaction() {
+        User user = (User)myRedisCacheUtil.get("[rediscache3-2]keyGenerator2--[1]");
+        user.setUsername("鸣人");
+        myRedisCacheUtil.set("[rediscache3-2]keyGenerator2--[1]", user);
+        int itachi = 1/0;
+        user.setUsername("佐助");
+        myRedisCacheUtil.set("[rediscache3-2]keyGenerator2--[1]", user);
     }
 }

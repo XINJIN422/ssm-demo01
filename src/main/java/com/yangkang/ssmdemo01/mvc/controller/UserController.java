@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.entity.User2;
 import com.yangkang.ssmdemo01.mvc.service.IUserService;
+import com.yangkang.ssmdemo01.redis.MyRedisCacheUtil;
 import com.yangkang.ssmdemo01.tools.SpringContextsUtil;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -29,6 +30,9 @@ public class UserController {
 
     @Resource
     private IUserService userService;
+
+    @Resource
+    private MyRedisCacheUtil myRedisCacheUtil;
 
     @RequestMapping("/showUser")
     public void selectUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -159,5 +163,34 @@ public class UserController {
         } else {
             return "redirect:../login.html";
         }
+    }
+
+    /**
+     * 这个方法主要测试redistemplate读取key是否需要指定cachename(不需要)
+     * ,读取后能否直接强转,还是有其他反序列化方法调用(直接强转即可)
+     * ,写对象的时候是否会自动根据配置来序列化,写完能否被其他注解读取(直接写,会按照指定方式自动序列化;并且数据能被注解读取)
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/testRedisUtil")
+    public void testRedisUtil(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("GBK");
+        User user = (User)myRedisCacheUtil.get("[rediscache3-2]keyGenerator2--[1]");
+        response.getWriter().write(new ObjectMapper().writeValueAsString(user));
+        response.getWriter().close();
+        myRedisCacheUtil.set("[rediscache3-2]keyGenerator2--[1]", user);
+    }
+
+    /**
+     * 测试redis的事务
+     * 测试证明,只要在方法上加上transaction注释,就能保证整个方法里的redisTemplate操作都在一个事务中
+     * 不需要再调用redisTemplate.multi()和redisTemplate.exec()方法了
+     * @param request
+     * @param response
+     */
+    @RequestMapping("/testJedisTransaction")
+    public void testJedisTransaction(HttpServletRequest request, HttpServletResponse response){
+        userService.testJedisTransaction();
     }
 }

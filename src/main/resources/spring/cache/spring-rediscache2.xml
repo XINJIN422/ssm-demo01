@@ -81,7 +81,7 @@
 
     <!--交给spring管理-->
     <!--默认的配置会初始化一个永不过期，使用StringRedisSerializer序列化key，使用JdkSerializationRedisSerializer序列化value的配置-->
-    <!--这样和上面的template不统一,注解写入和工具类读出不一样,可以参考一来创建自己想要的序列化方式-->
+    <!--TODO : 这样和上面的template不统一,注解写入和工具类读出不一样,可以参考一来创建自己想要的序列化方式(已经完成,详见三)-->
     <bean id="redisCacheManager" class="org.springframework.data.redis.cache.RedisCacheManager"
           factory-method="create" >
         <constructor-arg name="connectionFactory" ref="redisConnectionFactory"/>

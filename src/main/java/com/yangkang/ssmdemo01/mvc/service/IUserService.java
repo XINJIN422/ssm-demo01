@@ -23,4 +23,5 @@ public interface IUserService {
     public ShiroUser findByUsername(String username);
     public int testOutFile();
     public int testInFile();
+    public void testJedisTransaction();
 }
