@@ -50,6 +50,8 @@ public class MyRedisConfig {
         redisTemplate.setHashKeySerializer(keySerializer);
         redisTemplate.setHashValueSerializer(valueSerializer);
         redisTemplate.setEnableTransactionSupport(true);
+        //在redisTemplate这个bean初始化完成后便塞入MyBatisRedisCache的类变量中,否则mybatis开启使用redis作为二级缓存后,启动会报错!
+        MyBatisRedisCache.redisTemplate = redisTemplate;
         return redisTemplate;
     }
 

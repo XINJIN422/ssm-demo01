@@ -80,6 +80,8 @@
         <property name="mapperLocations" value="classpath:sql/mysql/*SQL.xml"/>
         <!-- 扫描entity包 使用别名 -->
         <property name="typeAliasesPackage" value="com.yangkang.ssmdemo01.mvc.entity"/>
+        <!-- mybatis配置 -->
+        <!--<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>-->
     </bean>
 
     <!-- 配置sqlSession -->

@@ -1,5 +1,8 @@
 package com.yangkang.ssmdemo01.redis;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -428,4 +431,29 @@ public class MyRedisCacheUtil {
 
     // ===============有序集合zset缓存的操作 以后用到再补===============start
 
+    /**
+     * 清空该rdis数据库所有键
+     */
+    public void flushDb(){
+        redisTemplate.execute(new RedisCallback<Object>() {
+            @Override
+            public Object doInRedis(RedisConnection redisConnection) throws DataAccessException {
+                redisConnection.flushDb();
+                return "ok";
+            }
+        });
+    }
+
+    /**
+     * 返回该redis数据库有多少键
+     * @return
+     */
+    public long dbSize(){
+        return redisTemplate.execute(new RedisCallback<Long>() {
+            @Override
+            public Long doInRedis(RedisConnection redisConnection) throws DataAccessException {
+                return redisConnection.dbSize();
+            }
+        });
+    }
 }
