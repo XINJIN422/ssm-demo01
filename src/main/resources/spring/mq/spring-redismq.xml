@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cache="http://www.springframework.org/schema/cache" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/cache
+        http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <description>redis消息队列</description>
+
+    <!--配置redis连接池-->
+    <beans:import resource="classpath:spring/cache/redis-pool.xml"/>
+    <!--spring-data-redis2.0以上的配置-->
+    <bean id="redisPasswordMq" class="org.springframework.data.redis.connection.RedisPassword">
+        <constructor-arg name="thePassword" value="${redis.password}"/>
+    </bean>
+    <bean id="redisStandaloneConfigurationMq" class="org.springframework.data.redis.connection.RedisStandaloneConfiguration" >
+        <property name="hostName" value="${redis.mq.host}"/>
+        <property name="port" value="${redis.mq.port}"/>
+        <property name="password" ref="redisPasswordMq"/>
+        <property name="database" value="${redis.mq.dbIndex}"/>
+    </bean>
+    <!-- MyRedisClientConfigFactoryBean继承了FactoryBean,实现了默认方法,所以不要在用factory-bean factory-method之类属性来指定了,直接获得目标对象-->
+    <bean id="jedisClientConfigurationMq" class="com.yangkang.ssmdemo01.redis.MyRedisClientConfigFactoryBean">
+        <property name="poolConfig" ref="redisPoolConfig"/>
+    </bean>
+    <bean id="redisConnectionFactoryMq" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <!--spring-data-redis2.0以上建议获取的方式-->
+        <constructor-arg name="standaloneConfig" ref="redisStandaloneConfigurationMq"/>
+        <constructor-arg name="clientConfig" ref="jedisClientConfigurationMq"/>
+    </bean>
+
+    <!-- 定义字符串序列化器 -->
+    <bean id="keySerializerMq" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+
+    <!-- 定义队列专用的字符串操作模板 -->
+    <bean id="stringRedisTemplateMq" class="org.springframework.data.redis.core.StringRedisTemplate">
+        <constructor-arg name="connectionFactory" ref="redisConnectionFactoryMq"/>
+        <property name="keySerializer" ref="keySerializerMq"/>
+        <property name="valueSerializer" ref="keySerializerMq"/>
+        <property name="hashKeySerializer" ref="keySerializerMq"/>
+        <property name="hashValueSerializer" ref="keySerializerMq"/>
+        <!--开启事务  -->
+        <property name="enableTransactionSupport" value="true"></property>
+    </bean>
+
+    <!-- 定义消息队列的订阅者 -->
+    <bean id="myRedisMqReceiver" class="com.yangkang.ssmdemo01.mq.MyRedisMqReceiver">
+        <property name="stringRedisTemplateMq" ref="stringRedisTemplateMq"/>
+    </bean>
+
+    <!-- 定义消息监听适配器 -->
+    <!--<bean id="messageListenerAdapter" class="org.springframework.data.redis.listener.adapter.MessageListenerAdapter">-->
+        <!--&lt;!&ndash; 因为该类继承了MessageListener,所以不用指定监听目标的方法 &ndash;&gt;-->
+        <!--<constructor-arg index="0" ref="myRedisMqReceiver"/>-->
+        <!--<constructor-arg index="1" value="subscribeMessage"/>-->
+    <!--</bean>-->
+
+    <!-- 定义消息监听者容器,属性包括监听适配器和连接池工厂 -->
+    <bean id="messageListenerContainer" class="org.springframework.data.redis.listener.RedisMessageListenerContainer">
+        <property name="connectionFactory" ref="redisConnectionFactoryMq"/>
+        <!--<property name="taskExecutor">-->
+            <!--<bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">-->
+                <!--<property name="poolSize" value="3"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+        <property name="messageListeners">
+            <map>
+                <entry key-ref="myRedisMqReceiver">
+                    <list>
+                        <!-- 普通订阅,订阅具体频道 -->
+                        <bean class="org.springframework.data.redis.listener.ChannelTopic">
+                            <constructor-arg value="topic.channel"/>
+                        </bean>
+                        <!-- 模式订阅,支持模式订阅匹配, *为模糊匹配符 -->
+                        <!--<bean class="org.springframework.data.redis.listener.PatternTopic">-->
+                            <!--<constructor-arg value="topic.*"/>-->
+                        <!--</bean>-->
+                        <!-- 匹配所有频道 -->
+                        <!--<bean class="org.springframework.data.redis.listener.PatternTopic">-->
+                            <!--<constructor-arg value="*"/>-->
+                        <!--</bean>-->
+                    </list>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

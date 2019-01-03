@@ -76,4 +76,7 @@
 
     <!--引入quartz定时、周期任务调度-->
     <beans:import resource="classpath:spring/quartz/spring-quartz.xml"/>
+
+    <!--引入redis队列-->
+    <beans:import resource="classpath:spring/mq/spring-redismq.xml"/>
 </beans>

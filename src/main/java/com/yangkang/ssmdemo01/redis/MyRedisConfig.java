@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
  */
 @Configuration
 @EnableCaching
+//@AutoConfigureAfter({RedisConnectionFactory.class})
 @ImportResource("classpath:spring/cache/spring-rediscache3.xml")
 public class MyRedisConfig {
 

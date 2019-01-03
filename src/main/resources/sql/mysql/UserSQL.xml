@@ -7,11 +7,12 @@
     <!-- 自定义的与redis整合的二级缓存-->
     <!-- 当select不需要缓存,可以配置useCache=false -->
     <!-- update,insert,delete相关statement需要配置flushCache=true来刷新缓存,否则会出现脏读 -->
-    <cache type="com.yangkang.ssmdemo01.redis.MyBatisRedisCache"
-            eviction="LRU"
-            flushInterval="6000000"
-            size="1024"
-            readOnly="false"/>
+    <!-- TODO 二级缓存有个bug,当整合shiro的时候,如果缓存有shiro用户认证sql,居然认证不通过!!! -->
+    <!--<cache type="com.yangkang.ssmdemo01.redis.MyBatisRedisCache"-->
+            <!--eviction="LRU"-->
+            <!--flushInterval="6000000"-->
+            <!--size="1024"-->
+            <!--readOnly="false"/>-->
 
     <select id="selectUserById" parameterType="java.lang.String" resultType="com.yangkang.ssmdemo01.mvc.entity.User">
         select * from User WHERE id = #{userId}

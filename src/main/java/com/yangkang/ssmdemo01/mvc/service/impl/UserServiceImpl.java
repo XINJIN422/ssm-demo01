@@ -10,6 +10,8 @@ import com.yangkang.ssmdemo01.tools.SpringContextsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -58,12 +60,12 @@ public class UserServiceImpl implements IUserService {
 //    @Cacheable(value = "default",key = "#userId")   //redis用
 //    @Cacheable(value = "default",keyGenerator = "keyGenerator")   //redis用,自定义keygenerator
     //测试mybatis缓存至redis
-//    @Caching(cacheable = {
+    @Caching(cacheable = {
 //            @Cacheable(value = "users", keyGenerator = "keyGenerator2"),
-//            @Cacheable(value = "users2", keyGenerator = "keyGenerator2"),
-//            @Cacheable(value = "default", keyGenerator = "keyGenerator"),
-//            @Cacheable(value = "users", key = "#userId")
-//    })      //组合注解,一条数据放到多个缓存中去;命中匹配的时候按照定义的顺序来!
+            @Cacheable(value = "users2", keyGenerator = "keyGenerator2"),
+            @Cacheable(value = "default", keyGenerator = "keyGenerator"),
+            @Cacheable(value = "users", key = "#userId")
+    })      //组合注解,一条数据放到多个缓存中去;命中匹配的时候按照定义的顺序来!
     public User selectUser2(String userId) throws Exception {
 //        ((IUserService)AopContext.currentProxy()).selectUser5("param1","param2");
         logger.debug("============selectUser2=============");
@@ -513,7 +515,7 @@ public class UserServiceImpl implements IUserService {
         }finally {
             lock.unlock();
         }
-
+        //后来发现一个新的工具类CountDownLatch,可以搭配countDown()和wait()方法来实现主线程等所有子线程结束后继续运行;
         while (atomicThreadNum.intValue() > 0){
             //轮询代替join
             Thread.sleep(100);
