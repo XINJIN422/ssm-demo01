@@ -79,4 +79,7 @@
 
     <!--引入redis队列-->
     <beans:import resource="classpath:spring/mq/spring-redismq.xml"/>
+
+    <!--引入kafka队列-->
+    <beans:import resource="classpath:spring/mq/spring-kafkamq.xml"/>
 </beans>
