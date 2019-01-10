@@ -1,6 +1,6 @@
 package com.yangkang.ssmdemo01;
 
-import java.util.Arrays;
+import java.sql.Date;
 
 /**
  * YkTest
@@ -71,9 +71,9 @@ public class YkTest {
 //        System.out.println(randomNum);
         //test13
 //        System.out.println(UUID.randomUUID().toString());
-//        java.sql.Date.valueOf("2015-12-25");
-        String[] test = {"1", "2", "3"};
-        System.out.println(Arrays.asList(test));
-        System.out.println(Arrays.toString(test));
+        System.out.println("'" + Date.valueOf("2015-12-25") + "'");
+//        String[] test = {"1", "2", "3"};
+//        System.out.println(Arrays.asList(test));
+//        System.out.println(Arrays.toString(test));
     }
 }

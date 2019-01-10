@@ -58,12 +58,12 @@
     <!--<beans:import resource="classpath:spring/spring-aspectj-serv.xml" />-->
 
     <!--Ehcache缓存管理-->
-    <!--<beans:import resource="classpath:spring/cache/spring-ehcache.xml"/>-->
+    <beans:import resource="classpath:spring/cache/spring-ehcache.xml"/>
 
     <!--redis缓存-->
     <!--<beans:import resource="classpath:spring/cache/spring-rediscache.xml"/>-->
     <!--<beans:import resource="classpath:spring/cache/spring-rediscache2.xml"/>-->
-    <beans:import resource="classpath:spring/cache/spring-rediscache3.xml"/>
+    <!--<beans:import resource="classpath:spring/cache/spring-rediscache3.xml"/>-->
 
     <!-- 用于持有ApplicationContext,SpringContextsUtil.getBean('xxxx')的静态方法得到spring bean对象 -->
     <bean class="com.yangkang.ssmdemo01.tools.SpringContextsUtil" lazy-init="false" />
@@ -75,11 +75,14 @@
     <beans:import resource="classpath:spring/shiro/spring-shiro.xml"/>
 
     <!--引入quartz定时、周期任务调度-->
-    <beans:import resource="classpath:spring/quartz/spring-quartz.xml"/>
+    <!--<beans:import resource="classpath:spring/quartz/spring-quartz.xml"/>-->
 
     <!--引入redis队列-->
-    <beans:import resource="classpath:spring/mq/spring-redismq.xml"/>
+    <!--<beans:import resource="classpath:spring/mq/spring-redismq.xml"/>-->
 
     <!--引入kafka队列-->
-    <beans:import resource="classpath:spring/mq/spring-kafkamq.xml"/>
+    <!--<beans:import resource="classpath:spring/mq/spring-kafkamq.xml"/>-->
+
+    <!--引入activiti工作流-->
+    <beans:import resource="classpath:spring/activiti/spring-activiti.xml"/>
 </beans>

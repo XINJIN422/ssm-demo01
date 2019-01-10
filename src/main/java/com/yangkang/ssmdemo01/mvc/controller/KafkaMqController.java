@@ -5,8 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.annotation.Resource;
-
 /**
  * KafkaMqController
  *
@@ -17,7 +15,7 @@ import javax.annotation.Resource;
 @RequestMapping("/kafka")
 public class KafkaMqController {
 
-    @Resource
+//    @Resource
     private MyKafkaMqProducer myKafkaMqProducer;
 
     @RequestMapping("/testPublishMessage/{topic}/{partition}/{timestamp}/{key}/{data}")

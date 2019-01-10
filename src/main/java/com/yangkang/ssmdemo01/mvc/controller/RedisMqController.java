@@ -6,8 +6,6 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.annotation.Resource;
-
 /**
  * RedisMqController
  *
@@ -18,7 +16,7 @@ import javax.annotation.Resource;
 @RequestMapping("/mq")
 public class RedisMqController {
 
-    @Resource
+//    @Resource
     private StringRedisTemplate stringRedisTemplateMq;
 
     @RequestMapping("/testPublishMessage/{message}")

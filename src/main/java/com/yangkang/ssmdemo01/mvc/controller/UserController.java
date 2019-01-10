@@ -31,7 +31,7 @@ public class UserController {
     @Resource
     private IUserService userService;
 
-    @Resource
+//    @Resource
     private MyRedisCacheUtil myRedisCacheUtil;
 
     @RequestMapping("/showUser")

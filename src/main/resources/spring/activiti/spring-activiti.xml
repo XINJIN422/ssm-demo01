@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <description>activiti工作流</description>
+    <!--流程引擎配置-->
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource5"/>
+        <property name="transactionManager" ref="transactionManager5"/>
+        <!--activiti相关表生成,第一次设为true,以后如果原表有改动,需要改为false-->
+        <property name="databaseSchemaUpdate" value="true"/>
+        <!--流程图字体-->
+        <property name="activityFontName" value="宋体"/>
+        <property name="labelFontName" value="宋体"/>
+        <property name="annotationFontName" value="宋体"/>
+        <!--是否开启数据库事件日志-->
+        <!--<property name="enableDatabaseEventLogging" value="false"/>-->
+        <!--是否用工作流的人员管理,自定义人员角色模块,先沿用看看-->
+        <!--<property name="dbIdentityUsed" value="true"/>-->
+        <!--历史数据保存级别:none忽略所有 activity归档所有流程实例和活动实例 audit缺省 full慢但全-->
+        <!--保存在ACT_HI_*历史表中-->
+        <!--<property name="history" value="full"/>-->
+        <!--<property name="processDefinitionCacheLimit" value="20"/>-->
+        <!-- 定时任务 -->
+        <!--<property name="jobExecutorActivate" value="true" />-->
+        <!--缓存支持-->
+        <!--<property name="processDefinitionCache">-->
+            <!--<bean class="me.kafeitu.demo.activiti.util.cache.DistributedCache" />-->
+        <!--</property>-->
+        <!--UUID作为主键生成策略, 分布式系统需要考虑!-->
+        <!--<property name="idGenerator" ref="xxxUtil"/>-->
+        <!--自动部署-->
+        <!--<property name="deploymentResources" value="classpath*:/act/deployments/**/*.bar"/>-->
+        <!-- 自定义用户权限 ，必须重新实现用户和组的相应方法-->
+        <!--<property name="customSessionFactories">-->
+            <!--<list>-->
+                <!--<bean class="com.thinkgem.jeesite.modules.act.service.ext.ActUserEntityServiceFactory"/>-->
+                <!--<bean class="com.thinkgem.jeesite.modules.act.service.ext.ActGroupEntityServiceFactory"/>-->
+            <!--</list>-->
+        <!--</property>-->
+        <!-- 自定义表单字段类型 -->
+        <!--<property name="customFormTypes">-->
+            <!--<list>-->
+                <!--&lt;!&ndash;                 <bean class="me.kafeitu.demo.activiti.activiti.form.UsersFormType"/> &ndash;&gt;-->
+            <!--</list>-->
+        <!--</property>-->
+        <!-- 全局事件 -->
+        <!--<property name="typedEventListeners">-->
+            <!--<map><entry key="VARIABLE_CREATED" ><list><ref bean="variableCreateListener"/></list></entry></map>-->
+        <!--</property>-->
+        <!--<property name="eventListeners">-->
+            <!--<list><ref bean="activitiListenerImpl" /></list>-->
+        <!--</property>-->
+    </bean>
+    <!--流程引擎-->
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
+    </bean>
+    <!--流程服务-->
+    <!--提供了对各个文件,图像的存取-->
+    <!--核心作用:部署流程, 查看流程图-->
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+    <!--提供了启动流程、查询流程实例、设置获取流程实例变量及对流程部署，流程定义和流程实例的存取服务-->
+    <!--核心作用:启动流程-->
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+    <!--提供了对 Activiti 系统中的用户和组的管理功能,必须使用这些用户和组的信息才能获取到相应的 Task-->
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
+    <!--提供了对流程中的数据存取，状态变更等操作、对用户 Task 和 Form 相关的操作 : 运行时任务查询、领取、完成、删除以及变量设置等功能-->
+    <!--核心作用:查询进行中的流程,审批任务-->
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+    <!--用于获取正在运行或已经完成的流程实例的信息，并已经被针对查询优化-->
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+    <!--可以存取启动和完成任务所需的表单数据并且根据需要来渲染表单-->
+    <bean id="formService" factory-bean="processEngine" factory-method="getFormService" />
+    <!--提供了对 Activiti 流程引擎的管理和维护功能，这些功能不在工作流驱动的应用程序中使用，主要用于 Activiti 系统的日常维护-->
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+</beans>
