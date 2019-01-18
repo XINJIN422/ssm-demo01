@@ -1,6 +1,12 @@
 package com.yangkang.ssmdemo01;
 
-import java.sql.Date;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * YkTest
@@ -10,7 +16,7 @@ import java.sql.Date;
  */
 public class YkTest {
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException, IOException {
         //test1
 //        UserLoginVerify.loadProperties();
         //test2
@@ -71,9 +77,25 @@ public class YkTest {
 //        System.out.println(randomNum);
         //test13
 //        System.out.println(UUID.randomUUID().toString());
-        System.out.println("'" + Date.valueOf("2015-12-25") + "'");
+//        System.out.println("'" + Date.valueOf("2015-12-25") + "'");
 //        String[] test = {"1", "2", "3"};
 //        System.out.println(Arrays.asList(test));
 //        System.out.println(Arrays.toString(test));
+        //test14
+        String[] roomates = {"yangkang", "wangsiyuan", "wanghanjie", null, "zhangwanyi"};
+        List<String> list = Arrays.asList(roomates);
+        FileOutputStream fos = new FileOutputStream("D:\\WorkFile\\TMP\\testcsv.txt");
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+        CSVFormat csvFormat = CSVFormat.DEFAULT
+                                .withEscape('"')
+                                .withQuoteMode(QuoteMode.ALL)
+                                .withNullString("")
+                                .withHeader(new String[]{"name"});
+        CSVPrinter csvPrinter = new CSVPrinter(osw, csvFormat);
+        csvPrinter.printRecords(list);
+        csvPrinter.flush();
+        csvPrinter.close();
+        osw.close();
+        fos.close();
     }
 }

@@ -8,7 +8,9 @@ import com.univocity.parsers.annotations.Parsed;
 import java.io.Serializable;
 import java.util.Date;
 
+//@SolrDocument(solrCoreName = "mycore2")     //solr注解(SolrCrudRepository使用)
 public class User implements Serializable{
+//    @Id     //solr注解(SolrCrudRepository使用)
     @Parsed
     @CsvBindByName
     private long id;
