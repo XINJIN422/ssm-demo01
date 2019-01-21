@@ -21,7 +21,9 @@
     <!--spring版本号 (因为这边用了jrebel热部署,当前破解版本不支持4.3.8.RELEASE)-->
     <!--<spring.version>4.2.5.RELEASE</spring.version>-->
     <!--当调试spring与redis整合的时候,用此版本-->
-    <spring.version>5.0.2.RELEASE</spring.version>
+    <!--<spring.version>5.0.2.RELEASE</spring.version>-->
+    <!--与最新版solr整合时,需要这个版本-->
+    <spring.version>5.1.4.RELEASE</spring.version>
 
   </properties>
 
@@ -263,12 +265,12 @@
       <artifactId>activiti-spring</artifactId>
       <version>6.0.0</version>
     </dependency>
-    <!--solr的java客户端-->
-    <dependency>
-      <groupId>org.apache.solr</groupId>
-      <artifactId>solr-solrj</artifactId>
-      <version>7.6.0</version>
-    </dependency>
+    <!--solr的java客户端, 与下面的依赖版本有冲突, 所以需要注释掉-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.solr</groupId>-->
+      <!--<artifactId>solr-solrj</artifactId>-->
+      <!--<version>7.6.0</version>-->
+    <!--</dependency>-->
     <!--spring与solr的整合-->
     <dependency>
         <groupId>org.springframework.data</groupId>

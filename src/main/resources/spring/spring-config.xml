@@ -85,4 +85,7 @@
 
     <!--引入activiti工作流-->
     <beans:import resource="classpath:spring/activiti/spring-activiti.xml"/>
+
+    <!--引入solr搜索引擎-->
+    <beans:import resource="classpath:spring/solr/spring-solr.xml"/>
 </beans>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:solr="http://www.springframework.org/schema/data/solr"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/data/solr
+        http://www.springframework.org/schema/data/solr/spring-solr-1.0.xsd">
+
+    <description>solr搜索引擎</description>
+    <!--solr服务器地址-->
+    <!--<solr:solr-server id="solrServer" url="http://127.0.0.1:8983/solr/mycore2"/>-->
+    <!--<bean class="com.yangkang.ssmdemo01.solr.MySolrConfig"/>-->
+    <bean id="solrClientFactory" class="org.springframework.data.solr.server.support.HttpSolrClientFactoryBean">
+        <property name="url" value="http://localhost:8983/solr"/>
+    </bean>
+    <!--solr模板, 使用solr模板可对索引库进行CRUD操作-->
+    <bean id="solrTemplate" class="org.springframework.data.solr.core.SolrTemplate">
+        <!--<constructor-arg ref="solrServer"/>-->
+        <!--<constructor-arg ref="solrClient"/>-->
+        <constructor-arg ref="solrClientFactory"/>
+    </bean>
+</beans>

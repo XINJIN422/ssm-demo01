@@ -4,6 +4,7 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
 import com.univocity.parsers.annotations.Format;
 import com.univocity.parsers.annotations.Parsed;
+import org.apache.solr.client.solrj.beans.Field;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,29 +12,37 @@ import java.util.Date;
 //@SolrDocument(solrCoreName = "mycore2")     //solr注解(SolrCrudRepository使用)
 public class User implements Serializable{
 //    @Id     //solr注解(SolrCrudRepository使用)
+    @Field    //solr注解(solrTemplate使用)
     @Parsed
     @CsvBindByName
     private long id;
+    @Field
     @Parsed
     @CsvBindByName
     private String email;
+    @Field
     @Parsed
     @CsvBindByName
     private String password;
+    @Field
     @Parsed
     @CsvBindByName
     private String username;
+    @Field
     @Parsed
     @CsvBindByName
     private String role;
+    @Field
     @Parsed
     @CsvBindByName
     private int status;
+    @Field
     @Parsed(field = "regtime")
     @Format(formats = "yyyy-MM-dd HH:mm:ss")
     @CsvBindByName(column = "regtime")
     @CsvDate("yyyy-MM-dd HH:mm:ss")
     private Date regTime;
+    @Field
     @Parsed(field = "regip")
     @CsvBindByName(column = "regip")
     private String regIp;

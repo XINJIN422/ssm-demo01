@@ -1,19 +1,27 @@
 package com.yangkang.ssmdemo01.mvc.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yangkang.ssmdemo01.mvc.entity.User;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.MapSolrParams;
+import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.result.ScoredPage;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * SolrController
@@ -25,11 +33,15 @@ import java.util.HashMap;
 @RequestMapping("/solr")
 public class SolrController {
 
-    private static SolrClient solrClient = new HttpSolrClient
-                                .Builder("http://127.0.0.1:8983/solr")
-                                .withConnectionTimeout(10000)
-                                .withSocketTimeout(60000)
-                                .build();
+    private static SolrClient solrClient = null;
+//                                new HttpSolrClient
+//                                .Builder("http://127.0.0.1:8983/solr")
+//                                .withConnectionTimeout(10000)
+//                                .withSocketTimeout(60000)
+//                                .build();
+
+    @Resource
+    private SolrTemplate solrTemplate;
 
     @RequestMapping("/testSolrQuery")
     public void testSolrQuery() throws IOException, SolrServerException {
@@ -65,4 +77,39 @@ public class SolrController {
         //还可以根据查询条件删除
 //        solrClient.deleteByQuery("mycore2", "查询条件");
     }
+
+    @RequestMapping("/testSolrQuery2")
+    public void testSolrQuery2() throws JsonProcessingException {
+        //各个jar包及变量格式要匹配, 否则会报错
+        //根据主键查询
+        User user = null;
+        user = solrTemplate.getById("mycore2", "1", User.class).get();
+        System.out.println(new ObjectMapper().writeValueAsString(user));
+    }
+
+    @RequestMapping("/testSolrQuery3")
+    public void testSolrQuery3() throws JsonProcessingException {
+        //分页查询
+        SimpleQuery query = new SimpleQuery("*:*");
+        query.setOffset(new Long(0));   //开始索引(默认为0)
+        query.setRows(3);   //每页记录数(默认为10)
+        ScoredPage<User> userScoredPage = solrTemplate.queryForPage("mycore2", query, User.class);
+        System.out.println("总记录数: " + userScoredPage.getTotalElements());
+        System.out.println("总页数: " + userScoredPage.getTotalPages());
+        //下面只是打了第一页, 并不是全部
+        List<User> userList = userScoredPage.getContent();
+        System.out.println(new ObjectMapper().writeValueAsString(userList));
+    }
+
+    @RequestMapping("/testSolrQuery4")
+    public void testSolrQuery4() throws JsonProcessingException {
+        //条件查询
+        SimpleQuery query = new SimpleQuery("*:*");
+        Criteria criteria = new Criteria("email").contains("456");
+        query.addCriteria(criteria);
+        ScoredPage<User> userScoredPage = solrTemplate.queryForPage("mycore2", query, User.class);
+        System.out.println(new ObjectMapper().writeValueAsString(userScoredPage.getContent()));
+    }
+
+    //添加删除和solrClient差不多,记得要commit
 }
