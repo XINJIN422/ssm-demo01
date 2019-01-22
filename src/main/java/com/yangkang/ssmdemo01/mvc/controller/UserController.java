@@ -208,4 +208,13 @@ public class UserController {
         PageInfo<User> userPageInfo = new PageInfo<>(users, 3);
         System.out.println(new ObjectMapper().writeValueAsString(userPageInfo));
     }
+
+    /**
+     * 测试PageHelper分页插件 + 自定义分页aop拦截器
+     */
+    @RequestMapping("/testPageHelper2")
+    public Object testPageHelperPaging() throws Exception {
+        List<User> users = userService.selectAllUsers();
+        return users;
+    }
 }

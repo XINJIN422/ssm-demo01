@@ -56,16 +56,17 @@
         plugins?,
         environments?, databaseIdProvider?, mappers?
     -->
-    <plugins>
-        <!-- com.github.pagehelper为PageHelper类所在包名 -->
-        <plugin interceptor="com.github.pagehelper.PageInterceptor">
-            <!--分页参数合理化 -->
-            <!--reasonable：分页合理化参数，默认值为false。当该参数设置为 true 时，
-            pageNum<=0 时会查询第一页，pageNum>pages（超过总数时），会查询最后一页。
-            默认false 时，直接根据参数进行查询。-->
-            <property name="reasonable" value="true"/>
-        </plugin>
-    </plugins>
+    <!--也可以直接配置在sqlSessionFactory的属性中-->
+    <!--<plugins>-->
+        <!--&lt;!&ndash; com.github.pagehelper为PageHelper类所在包名 &ndash;&gt;-->
+        <!--<plugin interceptor="com.github.pagehelper.PageInterceptor">-->
+            <!--&lt;!&ndash;分页参数合理化 &ndash;&gt;-->
+            <!--&lt;!&ndash;reasonable：分页合理化参数，默认值为false。当该参数设置为 true 时，-->
+            <!--pageNum<=0 时会查询第一页，pageNum>pages（超过总数时），会查询最后一页。-->
+            <!--默认false 时，直接根据参数进行查询。&ndash;&gt;-->
+            <!--<property name="reasonable" value="true"/>-->
+        <!--</plugin>-->
+    <!--</plugins>-->
 
     <!-- SQL映射文件，在这只配jar包中的文件，工程sql文件通过Spring自动扫描进行加载-->
     <!--<mappers>-->
