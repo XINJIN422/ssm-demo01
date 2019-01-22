@@ -2,6 +2,8 @@ package com.yangkang.ssmdemo01.solr;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * MySolrConfig
@@ -9,7 +11,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
  * @author yangkang
  * @date 2019/1/18
  */
-//@Configuration
+@Configuration
 public class MySolrConfig {
 //    @Bean
 //    public SolrClient solrClient() throws Exception {
@@ -18,7 +20,7 @@ public class MySolrConfig {
 //        return httpSolrClientFactoryBean.getObject();
 //    }
 
-//    @Bean
+    @Bean
     public SolrClient solrClient(){
         return  new HttpSolrClient.Builder("http://127.0.0.1:8983/solr")
                                 .withConnectionTimeout(10000)

@@ -33,7 +33,8 @@ import java.util.List;
 @RequestMapping("/solr")
 public class SolrController {
 
-    private static SolrClient solrClient = null;
+    @Resource
+    private SolrClient solrClient;
 //                                new HttpSolrClient
 //                                .Builder("http://127.0.0.1:8983/solr")
 //                                .withConnectionTimeout(10000)
@@ -42,6 +43,10 @@ public class SolrController {
 
     @Resource
     private SolrTemplate solrTemplate;
+
+    //spring-boot里会扫描生成bean, 普通的不行
+//    @Resource
+//    private UserSolrRepository userSolrRepository;
 
     @RequestMapping("/testSolrQuery")
     public void testSolrQuery() throws IOException, SolrServerException {
@@ -110,6 +115,16 @@ public class SolrController {
         ScoredPage<User> userScoredPage = solrTemplate.queryForPage("mycore2", query, User.class);
         System.out.println(new ObjectMapper().writeValueAsString(userScoredPage.getContent()));
     }
-
     //添加删除和solrClient差不多,记得要commit
+
+//    @RequestMapping("/testSolrQuery5")
+//    public void testSolrQuery5() throws JsonProcessingException {
+//        List<User> userList = userSolrRepository.findByUsername("杨康");
+//        System.out.println(new ObjectMapper().writeValueAsString(userList));
+//    }
+
+    @RequestMapping("/testSolrQuery6")
+    public void testSolrQuery6(){
+//        new SolrQuery("")
+    }
 }

@@ -24,4 +24,6 @@ public interface IUserService {
     public int testOutFile();
     public int testInFile();
     public void testJedisTransaction();
+
+    public List<User> selectAllUsers() throws Exception;
 }

@@ -1,6 +1,8 @@
 package com.yangkang.ssmdemo01.mvc.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yangkang.ssmdemo01.mvc.entity.User;
 import com.yangkang.ssmdemo01.mvc.entity.User2;
 import com.yangkang.ssmdemo01.mvc.service.IUserService;
@@ -192,5 +194,18 @@ public class UserController {
     @RequestMapping("/testJedisTransaction")
     public void testJedisTransaction(HttpServletRequest request, HttpServletResponse response){
         userService.testJedisTransaction();
+    }
+
+    /**
+     * 测试PageHelper分页插件
+     */
+    @RequestMapping("/testPageHelper")
+    public void testPageHelper() throws Exception {
+        //pageNum从1开始
+        PageHelper.startPage(2, 3);
+        List<User> users = userService.selectAllUsers();
+        //navigatePages导航页标的个数, 默认为8
+        PageInfo<User> userPageInfo = new PageInfo<>(users, 3);
+        System.out.println(new ObjectMapper().writeValueAsString(userPageInfo));
     }
 }

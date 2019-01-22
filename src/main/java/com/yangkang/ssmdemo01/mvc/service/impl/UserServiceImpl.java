@@ -563,4 +563,9 @@ public class UserServiceImpl implements IUserService {
         user.setUsername("佐助");
         myRedisCacheUtil.set("[rediscache3-2]keyGenerator2--[1]", user);
     }
+
+    @Override
+    public List<User> selectAllUsers() throws Exception{
+        return (List<User>)dao.findForList("UserSQL.selectAllUsers", null);
+    }
 }

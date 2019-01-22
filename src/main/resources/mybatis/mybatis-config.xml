@@ -9,9 +9,9 @@
 	</properties>
 	
     <!-- 基础设置 -->
-    <settings>
+    <!--<settings>-->
         <!-- 全局映射器启用二级缓存 -->
-        <setting name="cacheEnabled" value="true" />
+        <!--<setting name="cacheEnabled" value="true" />-->
         <!-- 查询时，关闭关联对象即时加载以提高性能 -->
         <!--<setting name="lazyLoadingEnabled" value="true" />-->
         <!-- 设置关联对象加载的形态，此处为按需加载字段(加载字段由SQL指 定)，不会加载关联表的所有字段，以提高性能 -->
@@ -30,7 +30,7 @@
         <!--<setting name="defaultStatementTimeout" value="600" />-->
         <!-- 设置但JDBC类型为空时,某些驱动程序 要指定值,default:OTHER -->
         <!--<setting name="jdbcTypeForNull" value="NULL" />-->
-    </settings>
+    <!--</settings>-->
     
 	<!-- 类型处理 -->
     <!--<typeHandlers>-->
@@ -47,7 +47,26 @@
     	<!-- walkbatis拦截器 -->
         <!--<plugin interceptor="org.walkframework.batis.plugins.WalkbatisPlugin" />-->
     <!--</plugins>-->
-    
+
+    <!--
+        plugins在配置文件中的位置必须符合要求，否则会报错，顺序如下:
+        properties?, settings?,
+        typeAliases?, typeHandlers?,
+        objectFactory?,objectWrapperFactory?,
+        plugins?,
+        environments?, databaseIdProvider?, mappers?
+    -->
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--分页参数合理化 -->
+            <!--reasonable：分页合理化参数，默认值为false。当该参数设置为 true 时，
+            pageNum<=0 时会查询第一页，pageNum>pages（超过总数时），会查询最后一页。
+            默认false 时，直接根据参数进行查询。-->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+
     <!-- SQL映射文件，在这只配jar包中的文件，工程sql文件通过Spring自动扫描进行加载-->
     <!--<mappers>-->
         <!--<mapper resource="batis/common/sql/EntitySQL.xml" />	&lt;!&ndash; walk-batis基础sql文件。该文件在walk-batis-*.jar中 &ndash;&gt;-->

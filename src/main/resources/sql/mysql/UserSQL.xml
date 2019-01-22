@@ -69,4 +69,8 @@
         ),
         id = IF(@idTMP = '', NULL, @idTMP)
     </update>
+
+    <select id="selectAllUsers" resultType="com.yangkang.ssmdemo01.mvc.entity.User">
+        select * from user
+    </select>
 </mapper>
