@@ -88,4 +88,7 @@
 
     <!--引入solr搜索引擎-->
     <beans:import resource="classpath:spring/solr/spring-solr.xml"/>
+
+    <!--引入elasticsearch搜索引擎-->
+    <beans:import resource="classpath:spring/elasticsearch/spring-elasticsearch.xml"/>
 </beans>

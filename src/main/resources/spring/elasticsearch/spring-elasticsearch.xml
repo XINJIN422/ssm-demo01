@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+">
+<!--xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"-->
+    <!--http://www.springframework.org/schema/data/elasticsearch-->
+    <!--http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch.xsd-->
+    <description>elasticsearch搜索引擎</description>
+    <!--elasticsearch服务器地址-->
+    <!--浏览器端head的访问端口9200, java客户端端口9300-->
+    <!--<elasticsearch:transport-client id="esClient" cluster-nodes="127.0.0.1:9300" cluster-name="elasticsearch"/>-->
+
+    <bean class="com.yangkang.ssmdemo01.elasticsearch.MyElasticsearchConfig"/>
+    <!--elasticsearch模板, 使用elasticsearch模板可对索引库进行CRUD操作-->
+    <!--<bean id="elasticsearchTemplate" class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">-->
+        <!--&lt;!&ndash;<constructor-arg ref="esClient"/>&ndash;&gt;-->
+        <!--<constructor-arg ref="transportClient"/>-->
+    <!--</bean>-->
+</beans>

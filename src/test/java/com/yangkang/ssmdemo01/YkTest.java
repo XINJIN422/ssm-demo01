@@ -1,12 +1,8 @@
 package com.yangkang.ssmdemo01;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
-
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * YkTest
@@ -82,20 +78,31 @@ public class YkTest {
 //        System.out.println(Arrays.asList(test));
 //        System.out.println(Arrays.toString(test));
         //test14
-        String[] roomates = {"yangkang", "wangsiyuan", "wanghanjie", null, "zhangwanyi"};
-        List<String> list = Arrays.asList(roomates);
-        FileOutputStream fos = new FileOutputStream("D:\\WorkFile\\TMP\\testcsv.txt");
-        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-        CSVFormat csvFormat = CSVFormat.DEFAULT
-                                .withEscape('"')
-                                .withQuoteMode(QuoteMode.ALL)
-                                .withNullString("")
-                                .withHeader(new String[]{"name"});
-        CSVPrinter csvPrinter = new CSVPrinter(osw, csvFormat);
-        csvPrinter.printRecords(list);
-        csvPrinter.flush();
-        csvPrinter.close();
-        osw.close();
-        fos.close();
+//        String[] roomates = {"yangkang", "wangsiyuan", "wanghanjie", null, "zhangwanyi"};
+//        List<String> list = Arrays.asList(roomates);
+//        FileOutputStream fos = new FileOutputStream("D:\\WorkFile\\TMP\\testcsv.txt");
+//        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+//        CSVFormat csvFormat = CSVFormat.DEFAULT
+//                                .withEscape('"')
+//                                .withQuoteMode(QuoteMode.ALL)
+//                                .withNullString("")
+//                                .withHeader(new String[]{"name"});
+//        CSVPrinter csvPrinter = new CSVPrinter(osw, csvFormat);
+//        csvPrinter.printRecords(list);
+//        csvPrinter.flush();
+//        csvPrinter.close();
+//        osw.close();
+//        fos.close();
+        //test15 有符号转无符号
+        long test = Integer.toUnsignedLong(-1408229028);
+        System.out.println(test);
+        int addr4 = (int) (test%256);
+        test = test/256;
+        int addr3 = (int) (test%256);
+        test = test/256;
+        int addr2 = (int) (test%256);
+        test = test/256;
+        int addr1 = (int) test;
+        System.out.println(addr1 + "." + addr2 + "." + addr3 + "." + addr4);
     }
 }

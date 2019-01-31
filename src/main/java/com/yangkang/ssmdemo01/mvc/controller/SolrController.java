@@ -11,9 +11,11 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.MapSolrParams;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.*;
+import org.springframework.data.solr.core.query.result.HighlightEntry;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.data.solr.core.query.result.ScoredPage;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -108,10 +110,15 @@ public class SolrController {
 
     @RequestMapping("/testSolrQuery4")
     public void testSolrQuery4() throws JsonProcessingException {
-        //条件查询
+        //条件查询 + 过滤 + 排序
         SimpleQuery query = new SimpleQuery("*:*");
         Criteria criteria = new Criteria("email").contains("456");
         query.addCriteria(criteria);
+        SimpleFilterQuery filterQuery = new SimpleFilterQuery();
+        filterQuery.addCriteria(new Criteria("status").is(1));
+        query.addFilterQuery(filterQuery);
+        Sort sort = new Sort(Sort.Direction.DESC, "regTime");
+        query.addSort(sort);
         ScoredPage<User> userScoredPage = solrTemplate.queryForPage("mycore2", query, User.class);
         System.out.println(new ObjectMapper().writeValueAsString(userScoredPage.getContent()));
     }
@@ -124,7 +131,21 @@ public class SolrController {
 //    }
 
     @RequestMapping("/testSolrQuery6")
-    public void testSolrQuery6(){
-//        new SolrQuery("")
+    public void testSolrQuery6() throws JsonProcessingException {
+        Criteria criteria = new Criteria("email").contains("456");
+        //高亮显示 highlighting
+        SimpleHighlightQuery highlightQuery = new SimpleHighlightQuery(criteria);
+        HighlightOptions highlightOptions = new HighlightOptions().addField("email");    //设置高亮域
+        highlightOptions.setSimplePrefix("<font color='red'>");     //设置高亮前缀
+        highlightOptions.setSimplePostfix("</font>");     //设置高亮后缀
+        highlightQuery.setHighlightOptions(highlightOptions);
+        HighlightPage<User> userHighlightPage = solrTemplate.queryForHighlightPage("mycore2", highlightQuery, User.class);
+        for (HighlightEntry<User> hUser : userHighlightPage.getHighlighted()){
+            User user = hUser.getEntity();
+            if (hUser.getHighlights().size()>0 && hUser.getHighlights().get(0).getSnipplets().size()>0){
+                user.setEmail(hUser.getHighlights().get(0).getSnipplets().get(0));   //设置高亮的结果
+            }
+            System.out.println(new ObjectMapper().writeValueAsString(user));
+        }
     }
 }

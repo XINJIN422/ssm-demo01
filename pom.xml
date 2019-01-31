@@ -24,6 +24,7 @@
     <!--<spring.version>5.0.2.RELEASE</spring.version>-->
     <!--与最新版solr整合时,需要这个版本-->
     <spring.version>5.1.4.RELEASE</spring.version>
+    <elasticsearch.version>6.5.4</elasticsearch.version>
 
   </properties>
 
@@ -282,6 +283,28 @@
       <groupId>com.github.pagehelper</groupId>
       <artifactId>pagehelper</artifactId>
       <version>5.1.8</version>
+    </dependency>
+    <!--spring与elasticsearch整合-->
+    <!--<dependency>-->
+      <!--<groupId>org.springframework.data</groupId>-->
+      <!--<artifactId>spring-data-elasticsearch</artifactId>-->
+      <!--<version>3.1.4.RELEASE</version>-->
+    <!--</dependency>-->
+    <!-- 引入Elasticsearch相关jar包-->
+    <dependency>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch</artifactId>
+      <version>${elasticsearch.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>transport</artifactId>
+      <version>${elasticsearch.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <version>${elasticsearch.version}</version>
     </dependency>
     <!--文件上传-->
     <dependency>
