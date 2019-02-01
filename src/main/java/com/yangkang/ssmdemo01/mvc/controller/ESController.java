@@ -2,15 +2,24 @@ package com.yangkang.ssmdemo01.mvc.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.yangkang.ssmdemo01.mvc.entity.User;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.*;
+import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -136,5 +145,83 @@ public class ESController {
             IndexResponse response = restHighLevelClient.index(request);
             System.out.println(response.toString());
         }
+    }
+
+    @RequestMapping("/testInsertBulk")
+    public void testInsertBulk() throws IOException {
+        BulkRequest bulkRequest = new BulkRequest();
+        IndexRequest request = new IndexRequest("my-first-es-index", "user");
+        for (int i = 20; i < 30; i++){
+            User user = new User();
+            user.setUsername("yang " + i);
+            user.setStatus(i%2);
+            user.setEmail("" + i + i + i + "123@qq.com");
+            user.setRegTime(new Date());
+//            request.id("" + i);
+            request.source(JSON.toJSONString(user), XContentType.JSON);
+            bulkRequest.add(request);
+        }
+        BulkResponse bulkResponse = restHighLevelClient.bulk(bulkRequest);
+        System.out.println("批量插入失败:" + bulkResponse.hasFailures());
+        for (BulkItemResponse bulkItemResponse : bulkResponse){
+            System.out.println("这一条插入失败:" + bulkItemResponse.isFailed());
+            DocWriteResponse itemResponse = bulkItemResponse.getResponse();
+            switch (bulkItemResponse.getOpType()){
+                case INDEX:
+                case CREATE:
+                    IndexResponse indexResponse = (IndexResponse) itemResponse;
+                    System.out.println(indexResponse.toString());
+                    break;
+                case UPDATE:
+                    UpdateResponse updateResponse = (UpdateResponse) itemResponse;
+                    System.out.println(updateResponse.toString());
+                    break;
+                case DELETE:
+                    DeleteResponse deleteResponse = (DeleteResponse) itemResponse;
+                    System.out.println(deleteResponse.toString());
+                    break;
+            }
+        }
+    }
+
+    @RequestMapping("/testScrollApi")
+    public void testScrollApi() throws IOException {
+        //es进行深度分页性能差, 当需要拉取大量数据的时候, 需要结合scroll api;
+        SearchRequest searchRequest = new SearchRequest("my-first-es-index");
+        searchRequest.types("user");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchQuery("username", "yang"));
+        searchSourceBuilder.size(3);
+        searchRequest.source(searchSourceBuilder);
+        //keep the search context alive for the corresponding time interval
+        //超时后, 再用这个id请求会报错
+        searchRequest.scroll(TimeValue.timeValueMinutes(1L));
+        SearchResponse response = restHighLevelClient.search(searchRequest);
+        String scrollId = response.getScrollId();
+        SearchHits hits = response.getHits();
+        SearchHit[] hits1 = hits.getHits();
+
+        //查询第二页
+        SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+        scrollRequest.scroll(TimeValue.timeValueSeconds(30L));
+        SearchResponse scrollResponse = restHighLevelClient.scroll(scrollRequest, RequestOptions.DEFAULT);
+        scrollId = scrollResponse.getScrollId();
+        hits = scrollResponse.getHits();
+        SearchHit[] hits2 = hits.getHits();
+
+        //查询第三页
+        scrollRequest = new SearchScrollRequest(scrollId);
+        scrollRequest.scroll(TimeValue.timeValueSeconds(30L));
+        scrollResponse = restHighLevelClient.scroll(scrollRequest, RequestOptions.DEFAULT);
+        scrollId = scrollResponse.getScrollId();
+        hits = scrollResponse.getHits();
+        SearchHit[] hits3 = hits.getHits();
+
+        //清除scroll identifiers
+        ClearScrollRequest request = new ClearScrollRequest();
+        request.addScrollId(scrollId);  //这边只清理最后一个,官方文档也是这么做的
+        ClearScrollResponse clearResponse = restHighLevelClient.clearScroll(request, RequestOptions.DEFAULT);
+        boolean success = clearResponse.isSucceeded();
+        System.out.println(clearResponse.getNumFreed());
     }
 }
