@@ -234,7 +234,8 @@ public class RSAEncryptUtil {
 //        long millisStart3 = new Date().getTime() - millisStart2;
 //        System.out.println("AES算法对数据加密耗时:" + millisStart3 + "ms");
         //RSA算法对AES公钥加密
-        String encryptedAesKey = RSAEncryptUtil.encrypt(AESEncryptUtil.getPublicSecretKeyStr(), RSAEncryptUtil.getClientPublicKeyFromStr(RSAEncryptUtil.getServerPublicKeyStr()));
+        String encryptedAesKey = RSAEncryptUtil.encrypt(AESEncryptUtil.getPublicSecretKeyStr(),
+                RSAEncryptUtil.getClientPublicKeyFromStr(RSAEncryptUtil.getServerPublicKeyStr()));
 //        long millisStart4 = (new Date().getTime() - millisStart2 - millisStart3);
 //        System.out.println("RSA算法对AES公钥加密耗时:" + millisStart4 + "ms");
         //真正传输的键值对
@@ -248,7 +249,8 @@ public class RSAEncryptUtil {
 //        long millisStart6 = (new Date().getTime() - millisStart5);
 //        System.out.println("RSA算法对AES公钥解密耗时:" + millisStart6 + "ms");
         //AES算法解密数据
-        TreeMap<String, String> decryptedParam = JSON.parseObject(AESEncryptUtil.decrypt(transParam.get("data")), new TypeReference<TreeMap<String, String>>() {});
+        TreeMap<String, String> decryptedParam = JSON.parseObject(AESEncryptUtil.decrypt(transParam.get("data")),
+                new TypeReference<TreeMap<String, String>>() {});
 //        long millisStart7 = (new Date().getTime() - millisStart5 - millisStart6);
 //        System.out.println("AES算法解密数据耗时:" + millisStart7 + "ms");
         //验签

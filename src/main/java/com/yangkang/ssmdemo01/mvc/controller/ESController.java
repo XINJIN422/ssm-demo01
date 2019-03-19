@@ -73,7 +73,7 @@ public class ESController {
 //                .execute()
 //                .actionGet();
 //        SearchHits searchHits = response.getHits();
-//        System.out.println("-------" + searchHits.getTotalHits() + "-------");
+//        Sstem.out.println("-------" + searchHits.getTotalHits() + "-------");
 //        SearchHit[] hits = searchHits.getHits();
 //        for (SearchHit searchHit : hits){
 //            Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
