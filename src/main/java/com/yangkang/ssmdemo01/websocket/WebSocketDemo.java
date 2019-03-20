@@ -10,6 +10,7 @@ import java.io.IOException;
 
 /**
  * WebSocketDemo
+ * 浏览器在一定空闲时间间隔会自动断开连接, 为了防止断开, 可以定时发送心跳包
  *
  * @author yangkang
  * @date 2019/3/19

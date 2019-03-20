@@ -324,6 +324,13 @@
       <artifactId>spring-websocket</artifactId>
       <version>${spring.version}</version>
     </dependency>
+    <!--socketio,兼容websocket-->
+      <dependency>
+          <groupId>com.corundumstudio.socketio</groupId>
+          <artifactId>netty-socketio</artifactId>
+          <version>1.7.17</version>
+          <!--<type>bundle</type>-->
+      </dependency>
   </dependencies>
 
   <build>

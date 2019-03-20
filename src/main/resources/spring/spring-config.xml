@@ -93,5 +93,7 @@
     <beans:import resource="classpath:spring/elasticsearch/spring-elasticsearch.xml"/>
 
     <!--websocket实时通信-->
-    <bean id="websocketDemo" class="com.yangkang.ssmdemo01.websocket.WebSocketDemo"/>
+    <!--<bean id="websocketDemo" class="com.yangkang.ssmdemo01.websocket.WebSocketDemo"/>-->
+    <!--socketio实时通信-->
+    <!--<bean id="socketioDemo" class="com.yangkang.ssmdemo01.socketio.SocketIODemo"/>-->
 </beans>

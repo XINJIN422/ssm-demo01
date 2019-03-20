@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./statics/js/jquery.js"></script>
+    <script src="./statics/js/socket.io.js"></script>
+</head>
+<body>
+    <h1>Netty-socket.io Demo</h1><br/>
+    <div id="console" class="well"></div>
+    <form class="well form-inline" onsubmit="return false;">
+        <input id="msg" class="input-xlarge" type="text" placeholder="Type something..."/>  
+        <button type="button" onClick="sendMessage()" class="btn" id="send">Send</button>  
+        <button type="button" onClick="sendDisconnect()" class="btn">Disconnect</button>
+    </form>
+    <script>
+        var clientId= '8015',targetId = '5';
+        //clientId为本端通话id，避免重复。项目中可用用户id替换
+        //targetId 为对端通话id
+        debugger;
+        var socket = io.connect('http://localhost:8081?clientId=' + clientId);
+        socket.on('connect', function () {
+            showMsg(':<span class="connect-msg">成功连接到服务器!</span>');
+        });
+        socket.on('message_event', function (data) {
+            showMsg('<br /><span class="username-msg">' + data.sourceClientId + ':</span> ' + data.msg);
+        });
+        socket.on('disconnect', function () {
+            showMsg(':<span class="disconnect-msg">服务已断开！</span>');
+        });
+        function sendDisconnect() {
+            socket.disconnect();
+        }
+        function sendMessage() {
+            var message = $('#msg').val();
+            $('#msg').val('');
+            var jsonObject = {
+                sourceClientId: clientId,
+                targetClientId: targetId,
+                msg: message
+            };
+            socket.emit('message_event', jsonObject);
+        }
+        function showMsg(message) {
+            var nowTime = new Date().toLocaleString()
+            var currentTime = "<span class='time'>" + nowTime + "</span>";
+            var element = $("<div>" + currentTime + "" + message + "</div>");
+            $('#console').append(element);
+        }
+        $(document).keydown(function (e) {
+            if (e.keyCode == 13) {
+                $('#send').click();
+            }
+        });
+    </script>
+</body>
+</html>
